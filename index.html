@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technology Futures Dashboard</title>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── INFO ICONS & POPUPS ──────────────────────────── */
+.info-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); font-size: 10px; font-family: var(--font-body);
+  cursor: pointer; flex-shrink: 0; line-height: 1; transition: all 0.2s;
+  font-weight: 600; padding: 0; vertical-align: middle; position: relative;
+}
+.info-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(32,128,141,0.08); }
+[data-theme="light"] .info-btn { border-color: #c0c3cc; color: #8a8d9a; }
+[data-theme="light"] .info-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(32,128,141,0.06); }
+
+.info-popup-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.info-popup-overlay.active { opacity: 1; pointer-events: auto; }
+[data-theme="light"] .info-popup-overlay { background: rgba(0,0,0,0.2); }
+
+.info-popup {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1.25rem 1.5rem; max-width: 420px; width: 90vw; position: relative;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4); transform: translateY(8px) scale(0.97);
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1);
+  max-height: 80vh; overflow-y: auto;
+}
+.info-popup-overlay.active .info-popup { transform: translateY(0) scale(1); }
+[data-theme="light"] .info-popup { background: #fff; box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
+
+.info-popup-title {
+  font-family: var(--font-heading); font-weight: 600; font-size: 0.95rem;
+  color: var(--text); margin-bottom: 0.6rem; padding-right: 1.5rem;
+}
+.info-popup-body {
+  font-family: var(--font-body); font-size: 0.82rem; line-height: 1.6;
+  color: var(--muted);
+}
+.info-popup-body p { margin-bottom: 0.5rem; }
+.info-popup-body p:last-child { margin-bottom: 0; }
+.info-popup-body strong { color: var(--text); font-weight: 600; }
+.info-popup-body .info-source {
+  margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--border);
+  font-size: 0.75rem; color: var(--muted); font-style: italic;
+}
+.info-popup-close {
+  position: absolute; top: 0.75rem; right: 0.75rem; width: 24px; height: 24px;
+  border-radius: 50%; border: none; background: transparent; color: var(--muted);
+  font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.info-popup-close:hover { background: var(--border); color: var(--text); }
+
+/* Info icon positioning variants */
+.archetype-card { position: relative; }
+.archetype-card .info-btn {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+}
+.slider-header .info-btn { margin-left: 4px; }
+.chart-title .info-btn { margin-left: 6px; }
+
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --border: #2a2d3a;
+  --text: #e0e0e6;
+  --muted: #8a8d9a;
+  --accent: #20808D;
+  --accent-hover: #269aa8;
+  --chart-1: #20808D;
+  --chart-2: #A84B2F;
+  --chart-3: #1B474D;
+  --chart-4: #BCE2E7;
+  --chart-5: #944454;
+  --chart-6: #FFC553;
+  --font-heading: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --positive: #34d399;
+  --negative: #f87171;
+  --surface-hover: #22253a;
+}
+
+[data-theme="light"] {
+  --bg: #f0f2f5;
+  --surface: #ffffff;
+  --border: #d1d5db;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --surface-hover: #f3f4f6;
+}
+
+html { font-size: 14px; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.logo {
+  width: 28px;
+  height: 28px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+.header-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--surface-hover); border-color: var(--accent); }
+.btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-icon { font-size: 1rem; line-height: 1; }
+
+/* Intro Block */
+.intro-details {
+  max-width: 800px;
+  margin: 0 auto 0.75rem;
+}
+.intro-details summary {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0.4rem 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  user-select: none;
+}
+.intro-details summary::-webkit-details-marker { display: none; }
+.intro-details summary::before {
+  content: '\25B6';
+  font-size: 0.55rem;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+.intro-details[open] summary::before {
+  transform: rotate(90deg);
+}
+.intro-text {
+  font-size: 0.78rem;
+  line-height: 1.65;
+  color: var(--muted);
+  padding: 0.5rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-top: 0.3rem;
+}
+
+/* Archetype Section */
+.archetypes-section {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-label {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.archetypes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.axis-labels {
+  display: flex;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 0 auto 0.3rem;
+}
+.axis-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.archetype-card {
+  padding: 0.7rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.archetype-card:hover { border-color: var(--accent); background: var(--surface-hover); }
+.archetype-card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), inset 0 0 0 1px rgba(32,128,141,0.15);
+  background: rgba(32,128,141,0.06);
+}
+.archetype-card .badge-modified {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.6rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: var(--chart-6);
+  color: #1a1d27;
+  font-weight: 600;
+  display: none;
+}
+.archetype-card.modified .badge-modified { display: block; }
+.archetype-icon { font-size: 1.2rem; margin-bottom: 0.25rem; }
+.archetype-title {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.archetype-desc {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Main Content */
+.main-content {
+  display: flex;
+  min-height: 0;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  border-right: 1px solid var(--border);
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--surface);
+}
+.slider-group { margin-bottom: 1rem; }
+.slider-group-title {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+.slider-item { margin-bottom: 0.6rem; }
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+.slider-label {
+  font-size: 0.72rem;
+  color: var(--text);
+}
+.slider-value {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+
+/* Dashboard */
+.dashboard {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+.chart-title {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.chart-title-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 260px;
+}
+.chart-container canvas { width: 100% !important; height: 100% !important; }
+
+/* Compare Mode */
+.compare-wrapper {
+  display: none;
+}
+.compare-wrapper.active {
+  display: block;
+}
+.normal-wrapper.hidden {
+  display: none;
+}
+.compare-header {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.compare-col-header {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.compare-col-label {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.compare-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.4rem;
+}
+.compare-selector {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.delta-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.delta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  text-align: center;
+}
+.delta-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+.delta-value {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.delta-positive { color: var(--positive); }
+.delta-negative { color: var(--negative); }
+.compare-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.compare-chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+.compare-chart-title {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.compare-chart-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5/3;
+}
+.compare-chart-container canvas { width: 100% !important; height: 100% !important; }
+
+/* Summary */
+.scenario-summary {
+  margin-top: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem;
+}
+.summary-title {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.summary-text {
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+.summary-stats {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+}
+.summary-stat-label {
+  font-size: 0.6rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.summary-stat-value {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Footer */
+.footer {
+  padding: 0.6rem 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.footer a:hover { text-decoration: underline; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .charts-grid { grid-template-columns: repeat(2, 1fr); }
+  .compare-charts { grid-template-columns: 1fr; }
+  .delta-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .main-content { flex-direction: column; }
+  .sidebar { width: 100%; min-width: 100%; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+  .dashboard { max-height: none; }
+  .charts-grid { grid-template-columns: 1fr; }
+  .archetypes-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">TF</div>
+    <span class="header-title">Technology Futures Dashboard</span>
+  </div>
+  <div class="header-right">
+    <button class="btn" id="compareToggle" onclick="toggleCompareMode()">
+      <span class="btn-icon">&#x2194;</span> Compare Scenarios
+    </button>
+    <button class="btn" id="themeToggle" onclick="toggleTheme()">
+      <span class="btn-icon" id="themeIcon">&#9790;</span> <span id="themeLabel">Light</span>
+    </button>
+  </div>
+</header>
+
+<!-- Archetypes -->
+<section class="archetypes-section">
+  <details class="intro-details" open>
+    <summary>How to use this dashboard</summary>
+    <div class="intro-text">Run future scenarios on the impact of technology acceleration on things that matter. Start with one of four major futures (Walled Gardens, Open Frontiers, State Machine, Wild West). Then use sliders to adjust your opinions on technology acceleration to see impact on projected future metrics. View scenario description summary in concluding summary block.</div>
+  </details>
+  <div class="section-label">Scenario Archetypes &mdash; Select a starting point</div>
+  <div class="axis-labels">
+    <span class="axis-label">&#x2190; Centralized (Big Tech)</span>
+    <span class="axis-label">Distributed (Open Source) &#x2192;</span>
+  </div>
+  <div class="archetypes-grid">
+    <div class="archetype-card" data-archetype="walledGarden" onclick="selectArchetype('walledGarden')">
+      <span class="badge-modified">Modified</span>
+      <button class="info-btn" onclick="event.stopPropagation();showInfo('archetype','walledGarden')" aria-label="Info">i</button>
+      <div class="archetype-icon">&#x1F3F0;</div>
+      <div class="archetype-title">Walled Garden</div>
+      <div class="archetype-desc">Big tech dominance with strong government oversight. Slower but controlled AI deployment.</div>
+    </div>
+    <div class="archetype-card" data-archetype="openFrontier" onclick="selectArchetype('openFrontier')">
+      <span class="badge-modified">Modified</span>
+      <button class="info-btn" onclick="event.stopPropagation();showInfo('archetype','openFrontier')" aria-label="Info">i</button>
+      <div class="archetype-icon">&#x1F680;</div>
+      <div class="archetype-title">Open Frontier</div>
+      <div class="archetype-desc">Open-source AI flourishes with minimal barriers. Rapid innovation, startup ecosystem thrives.</div>
+    </div>
+    <div class="archetype-card" data-archetype="stateMachine" onclick="selectArchetype('stateMachine')">
+      <span class="badge-modified">Modified</span>
+      <button class="info-btn" onclick="event.stopPropagation();showInfo('archetype','stateMachine')" aria-label="Info">i</button>
+      <div class="archetype-icon">&#x2699;</div>
+      <div class="archetype-title">State Machine</div>
+      <div class="archetype-desc">Corporate monopolies with minimal oversight. Maximum efficiency but high inequality.</div>
+    </div>
+    <div class="archetype-card" data-archetype="wildWest" onclick="selectArchetype('wildWest')">
+      <span class="badge-modified">Modified</span>
+      <button class="info-btn" onclick="event.stopPropagation();showInfo('archetype','wildWest')" aria-label="Info">i</button>
+      <div class="archetype-icon">&#x1F32A;</div>
+      <div class="archetype-title">Wild West</div>
+      <div class="archetype-desc">Regulatory complexity fragments open-source community. Innovation slows under compliance burden.</div>
+    </div>
+  </div>
+  <div class="axis-labels" style="margin-top:0.15rem;">
+    <span class="axis-label">&#x2191; Heavy Regulation</span>
+    <span class="axis-label">&#x2191; Light Regulation</span>
+  </div>
+</section>
+
+<!-- Main -->
+<div class="main-content">
+  <!-- Sidebar Sliders -->
+  <aside class="sidebar" id="sidebar">
+    <div class="slider-group">
+      <div class="slider-group-title">Technology Trajectory</div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">AI Capability Growth Rate<button class="info-btn" onclick="showInfo('slider','aiCapability')" aria-label="Info">i</button></span><span class="slider-value" id="val-aiCapability">7</span></div>
+        <input type="range" min="1" max="10" value="7" id="slider-aiCapability" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">AI Adoption Speed<button class="info-btn" onclick="showInfo('slider','aiAdoption')" aria-label="Info">i</button></span><span class="slider-value" id="val-aiAdoption">7</span></div>
+        <input type="range" min="1" max="10" value="7" id="slider-aiAdoption" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Quantum Computing Timeline<button class="info-btn" onclick="showInfo('slider','quantumTimeline')" aria-label="Info">i</button></span><span class="slider-value" id="val-quantumTimeline">2034</span></div>
+        <input type="range" min="2028" max="2045" value="2034" id="slider-quantumTimeline" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Thermodynamic Computing<button class="info-btn" onclick="showInfo('slider','thermoComputing')" aria-label="Info">i</button></span><span class="slider-value" id="val-thermoComputing">5</span></div>
+        <input type="range" min="1" max="10" value="5" id="slider-thermoComputing" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Fusion Energy Arrival<button class="info-btn" onclick="showInfo('slider','fusionArrival')" aria-label="Info">i</button></span><span class="slider-value" id="val-fusionArrival">2045</span></div>
+        <input type="range" min="2030" max="2060" value="2045" id="slider-fusionArrival" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Robotics Maturity<button class="info-btn" onclick="showInfo('slider','roboticsMaturity')" aria-label="Info">i</button></span><span class="slider-value" id="val-roboticsMaturity">6</span></div>
+        <input type="range" min="1" max="10" value="6" id="slider-roboticsMaturity" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Biotech Advancement<button class="info-btn" onclick="showInfo('slider','biotechLevel')" aria-label="Info">i</button></span><span class="slider-value" id="val-biotechLevel">5</span></div>
+        <input type="range" min="1" max="10" value="5" id="slider-biotechLevel" oninput="onSliderChange()">
+      </div>
+    </div>
+    <div class="slider-group">
+      <div class="slider-group-title">Policy &amp; Governance</div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Regulatory Intensity<button class="info-btn" onclick="showInfo('slider','regulationIntensity')" aria-label="Info">i</button></span><span class="slider-value" id="val-regulationIntensity">5</span></div>
+        <input type="range" min="1" max="10" value="5" id="slider-regulationIntensity" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">UBI / Safety Net Level<button class="info-btn" onclick="showInfo('slider','ubiLevel')" aria-label="Info">i</button></span><span class="slider-value" id="val-ubiLevel">4</span></div>
+        <input type="range" min="0" max="10" value="4" id="slider-ubiLevel" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Education Adaptation Speed<button class="info-btn" onclick="showInfo('slider','educationSpeed')" aria-label="Info">i</button></span><span class="slider-value" id="val-educationSpeed">5</span></div>
+        <input type="range" min="1" max="10" value="5" id="slider-educationSpeed" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Global Trade Openness<button class="info-btn" onclick="showInfo('slider','tradeOpenness')" aria-label="Info">i</button></span><span class="slider-value" id="val-tradeOpenness">6</span></div>
+        <input type="range" min="1" max="10" value="6" id="slider-tradeOpenness" oninput="onSliderChange()">
+      </div>
+    </div>
+    <div class="slider-group">
+      <div class="slider-group-title">Economic Structure</div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Small Business AI Access<button class="info-btn" onclick="showInfo('slider','smbAccess')" aria-label="Info">i</button></span><span class="slider-value" id="val-smbAccess">6</span></div>
+        <input type="range" min="1" max="10" value="6" id="slider-smbAccess" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Infrastructure Investment<button class="info-btn" onclick="showInfo('slider','infrastructure')" aria-label="Info">i</button></span><span class="slider-value" id="val-infrastructure">6</span></div>
+        <input type="range" min="1" max="10" value="6" id="slider-infrastructure" oninput="onSliderChange()">
+      </div>
+      <div class="slider-item">
+        <div class="slider-header"><span class="slider-label">Inflation / Deflation Rate<button class="info-btn" onclick="showInfo('slider','inflationRate')" aria-label="Info">i</button></span><span class="slider-value" id="val-inflationRate">3%</span></div>
+        <input type="range" min="0" max="8" value="3" id="slider-inflationRate" oninput="onSliderChange()">
+      </div>
+    </div>
+  </aside>
+
+  <!-- Dashboard -->
+  <main class="dashboard" id="dashboard">
+    <!-- Normal Mode -->
+    <div class="normal-wrapper" id="normalWrapper">
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title"><span class="chart-title-dot"></span>U.S. GDP Trajectory<button class="info-btn" onclick="showInfo('chart','gdp')" aria-label="Info">i</button></div>
+          <div class="chart-container"><canvas id="chartGDP"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><span class="chart-title-dot" style="background:var(--chart-2)"></span>Jobs Impact<button class="info-btn" onclick="showInfo('chart','jobs')" aria-label="Info">i</button></div>
+          <div class="chart-container"><canvas id="chartJobs"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><span class="chart-title-dot" style="background:var(--chart-3)"></span>Quality of Life Index<button class="info-btn" onclick="showInfo('chart','qol')" aria-label="Info">i</button></div>
+          <div class="chart-container"><canvas id="chartQoL"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><span class="chart-title-dot" style="background:var(--chart-4)"></span>Leisure Time<button class="info-btn" onclick="showInfo('chart','leisure')" aria-label="Info">i</button></div>
+          <div class="chart-container"><canvas id="chartLeisure"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><span class="chart-title-dot" style="background:var(--chart-5)"></span>Income Inequality<button class="info-btn" onclick="showInfo('chart','inequality')" aria-label="Info">i</button></div>
+          <div class="chart-container"><canvas id="chartInequality"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><span class="chart-title-dot" style="background:var(--chart-6)"></span>Innovation Index<button class="info-btn" onclick="showInfo('chart','innovation')" aria-label="Info">i</button></div>
+          <div class="chart-container"><canvas id="chartInnovation"></canvas></div>
+        </div>
+      </div>
+      <div class="scenario-summary" id="scenarioSummary">
+        <div class="summary-title"><span class="chart-title-dot"></span>Scenario Summary</div>
+        <div class="summary-text" id="summaryText"></div>
+        <div class="summary-stats" id="summaryStats"></div>
+      </div>
+    </div>
+
+    <!-- Compare Mode -->
+    <div class="compare-wrapper" id="compareWrapper">
+      <div class="compare-header">
+        <div class="compare-col-header">
+          <span class="compare-col-label"><span class="compare-dot" style="background:var(--accent)"></span>Scenario A</span>
+          <select class="compare-selector" id="compareSelectA" onchange="onCompareArchetypeChange('A')">
+            <option value="current">Current Settings</option>
+            <option value="walledGarden">Walled Garden</option>
+            <option value="openFrontier">Open Frontier</option>
+            <option value="stateMachine">State Machine</option>
+            <option value="wildWest">Wild West</option>
+          </select>
+        </div>
+        <div class="compare-col-header">
+          <span class="compare-col-label"><span class="compare-dot" style="background:var(--chart-6)"></span>Scenario B</span>
+          <select class="compare-selector" id="compareSelectB" onchange="onCompareArchetypeChange('B')">
+            <option value="walledGarden">Walled Garden</option>
+            <option value="openFrontier" selected>Open Frontier</option>
+            <option value="stateMachine">State Machine</option>
+            <option value="wildWest">Wild West</option>
+          </select>
+        </div>
+      </div>
+      <div class="delta-row" id="deltaRow"></div>
+      <div class="compare-charts" id="compareChartsGrid">
+        <div class="compare-chart-card"><div class="compare-chart-title">U.S. GDP Trajectory</div><div class="compare-chart-container"><canvas id="cmpGDP"></canvas></div></div>
+        <div class="compare-chart-card"><div class="compare-chart-title">Jobs Impact (Net)</div><div class="compare-chart-container"><canvas id="cmpJobs"></canvas></div></div>
+        <div class="compare-chart-card"><div class="compare-chart-title">Quality of Life Index</div><div class="compare-chart-container"><canvas id="cmpQoL"></canvas></div></div>
+        <div class="compare-chart-card"><div class="compare-chart-title">Leisure Time</div><div class="compare-chart-container"><canvas id="cmpLeisure"></canvas></div></div>
+        <div class="compare-chart-card"><div class="compare-chart-title">Income Inequality</div><div class="compare-chart-container"><canvas id="cmpInequality"></canvas></div></div>
+        <div class="compare-chart-card"><div class="compare-chart-title">Innovation Index</div><div class="compare-chart-container"><canvas id="cmpInnovation"></canvas></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Info Popup Overlay -->
+<div class="info-popup-overlay" id="infoOverlay" onclick="closeInfo()">
+  <div class="info-popup" onclick="event.stopPropagation()">
+    <button class="info-popup-close" onclick="closeInfo()" aria-label="Close">&times;</button>
+    <div class="info-popup-title" id="infoTitle"></div>
+    <div class="info-popup-body" id="infoBody"></div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  Technology Futures Dashboard &middot; Scenario Planning Tool &middot;
+  <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+</footer>
+
+<script>
+// ─── INFO DATA ─────────────────────────────────────────
+const INFO_DATA = {
+  archetype: {
+    walledGarden: {
+      title: 'Walled Garden',
+      body: `<p><strong>Core thesis:</strong> A small number of large technology companies control AI development behind proprietary walls, while governments impose strict regulatory frameworks to manage deployment.</p>
+<p><strong>Historical parallel:</strong> Similar to the telecommunications industry pre-deregulation, or the pharmaceutical industry's FDA-gated model. Innovation happens, but it is controlled, slow, and concentrated.</p>
+<p><strong>Key characteristics:</strong> High regulatory intensity (8), moderate UBI/safety nets (6), slower AI adoption (4), conservative quantum/thermo timelines. GDP growth is modest but stable. Job displacement is cushioned but job creation is also suppressed by compliance overhead.</p>
+<p><strong>Who benefits:</strong> Incumbent firms, regulated industries, workers in protected sectors. <strong>Who loses:</strong> Startups, open-source developers, consumers paying higher prices for slower innovation.</p>
+<p class="info-source">Inspired by scenarios from RAND Corporation future-of-AI frameworks and EU AI Act regulatory models.</p>`
+    },
+    openFrontier: {
+      title: 'Open Frontier',
+      body: `<p><strong>Core thesis:</strong> Open-source AI models flourish with minimal regulatory barriers. A vibrant startup ecosystem drives rapid innovation, and AI capabilities become widely accessible.</p>
+<p><strong>Historical parallel:</strong> Resembles the early internet era (1995-2005) — permissionless innovation, rapid startup formation, and transformative economic growth before major regulatory frameworks took hold.</p>
+<p><strong>Key characteristics:</strong> High AI capability (8) and adoption (8), light regulation (3), strong SMB access (9), early quantum/thermo breakthroughs. GDP surges well above baseline. Massive job creation from new AI-native industries, though displacement is also significant.</p>
+<p><strong>Who benefits:</strong> Entrepreneurs, small businesses, developers, consumers, emerging economies. <strong>Who loses:</strong> Workers slow to reskill, industries reliant on information asymmetry.</p>
+<p class="info-source">Draws from Mozilla Foundation's "Open AI" advocacy, Hugging Face ecosystem data, and Stanford HAI's AI Index Report.</p>`
+    },
+    stateMachine: {
+      title: 'State Machine',
+      body: `<p><strong>Core thesis:</strong> A handful of mega-corporations achieve near-monopoly control of AI with minimal government intervention. Maximum efficiency is achieved, but at the cost of rising inequality and concentrated power.</p>
+<p><strong>Historical parallel:</strong> The Gilded Age of American industry — massive productivity gains led by Standard Oil, Carnegie Steel, and similar monopolies, with wealth concentration and limited worker protections.</p>
+<p><strong>Key characteristics:</strong> Maximum AI capability (9) and adoption (9), minimal regulation (2) and UBI (2), aggressive tech timelines. GDP growth is the highest of any scenario. Job creation is strong due to AI-driven new industries, but inequality rises sharply and social mobility declines.</p>
+<p><strong>Who benefits:</strong> Shareholders, highly-skilled AI workers, early adopters. <strong>Who loses:</strong> Middle-class workers, small businesses squeezed by platform monopolies, communities left behind.</p>
+<p class="info-source">Informed by McKinsey Global Institute future-of-work analyses and historical monopoly economics research.</p>`
+    },
+    wildWest: {
+      title: 'Wild West',
+      body: `<p><strong>Core thesis:</strong> Heavy, fragmented regulation creates a compliance maze that ironically benefits large firms who can afford legal teams, while stifling the open-source community and smaller players.</p>
+<p><strong>Historical parallel:</strong> The post-Sarbanes-Oxley era for financial services — well-intentioned regulation that increased costs disproportionately for smaller firms, reducing competition and innovation.</p>
+<p><strong>Key characteristics:</strong> High regulation (9) but low effectiveness, moderate AI capability (6) with slow adoption (5), delayed quantum/thermo timelines, higher inflation (5%). Innovation slows under compliance burden. GDP growth is weakest among scenarios.</p>
+<p><strong>Who benefits:</strong> Compliance consultants, large firms with regulatory moats, incumbent industries. <strong>Who loses:</strong> Startups, open-source community, consumers facing slower innovation and higher costs.</p>
+<p class="info-source">Based on regulatory capture theory (Stigler, 1971) and contemporary analysis of AI governance fragmentation across jurisdictions.</p>`
+    }
+  },
+  slider: {
+    aiCapability: {
+      title: 'AI Capability Growth Rate',
+      body: `<p><strong>What it controls:</strong> The pace at which AI systems improve in reasoning, generation, and autonomous task completion. Scale of 1 (stagnation) to 10 (exponential breakthroughs annually).</p>
+<p><strong>Why it matters:</strong> AI capability is the primary engine driving GDP growth, job displacement, job creation, and innovation in this model. Higher capability means more economic output but also faster labor disruption.</p>
+<p><strong>Model impact:</strong> Directly multiplied with AI Adoption to calculate GDP growth contribution. Also drives job displacement (higher capability = more automatable tasks) and job creation (new AI-native industries emerge). Affects healthcare QoL through medical AI advances.</p>
+<p class="info-source">Grounded in compute scaling trends from Epoch AI and capability benchmarks (MMLU, SWE-bench, ARC-AGI).</p>`
+    },
+    aiAdoption: {
+      title: 'AI Adoption Speed',
+      body: `<p><strong>What it controls:</strong> How quickly businesses, governments, and consumers integrate AI into workflows. Scale of 1 (slow, enterprise-only) to 10 (ubiquitous, consumer-grade AI everywhere).</p>
+<p><strong>Why it matters:</strong> Capability without adoption has limited economic impact. Adoption speed determines how quickly AI's potential translates into real GDP, productivity gains, and labor market shifts.</p>
+<p><strong>Model impact:</strong> Multiplied with AI Capability for GDP growth. Drives job displacement (faster adoption = quicker workforce transitions). Higher adoption also boosts job creation by expanding AI-adjacent industries. Increases digital access in QoL.</p>
+<p class="info-source">Based on enterprise AI adoption surveys from McKinsey (2024) and diffusion-of-innovation theory (Rogers, 1962).</p>`
+    },
+    quantumTimeline: {
+      title: 'Quantum Computing Timeline',
+      body: `<p><strong>What it controls:</strong> The year fault-tolerant, commercially viable quantum computing arrives. Range from 2028 (optimistic) to 2045 (delayed).</p>
+<p><strong>Why it matters:</strong> Quantum computing unlocks breakthroughs in drug discovery, materials science, cryptography, and optimization problems intractable for classical computers. Its arrival creates a step-change in innovation and GDP.</p>
+<p><strong>Model impact:</strong> Once the timeline year is reached, adds a fixed boost to GDP growth (+0.5%/yr), job creation (+2M), and innovation score (+8 points ramping over 5 years). Earlier arrival compounds these effects over more years.</p>
+<p class="info-source">Timeline estimates from IBM Quantum roadmap, Google's Willow milestones, and BCG quantum computing market projections.</p>`
+    },
+    thermoComputing: {
+      title: 'Thermodynamic Computing',
+      body: `<p><strong>What it controls:</strong> Investment and progress in thermodynamic (stochastic) computing — a paradigm using thermal noise for probabilistic computation. Scale of 1 (negligible) to 10 (transformative).</p>
+<p><strong>Why it matters:</strong> Thermodynamic computing could dramatically reduce energy costs for AI training and inference, enable new classes of optimization and sampling algorithms, and operate at room temperature — unlike quantum systems requiring cryogenic cooling.</p>
+<p><strong>Model impact:</strong> Projects a <strong>bigger impact than quantum computing</strong> because it ramps continuously (not gated by a single arrival year) and is more broadly applicable. Contributes to GDP growth (0.2%/yr at max), innovation score (2.5x multiplier — larger than quantum's fixed 8-point boost), and job creation through new energy-efficient computing industries.</p>
+<p class="info-source">Based on research from Normal Computing, MIT thermodynamic AI papers, and DOE energy-efficient computing initiatives.</p>`
+    },
+    fusionArrival: {
+      title: 'Fusion Energy Arrival',
+      body: `<p><strong>What it controls:</strong> The year commercially viable fusion energy becomes available. Range from 2030 (breakthrough) to 2060 (significantly delayed).</p>
+<p><strong>Why it matters:</strong> Fusion provides virtually unlimited clean energy, transforming manufacturing costs, enabling energy-intensive AI at scale, and dramatically improving environmental outcomes.</p>
+<p><strong>Model impact:</strong> Once arrived, adds +0.8%/yr to GDP growth, +3M jobs in energy sector, +20 points to environmental QoL, and +10 to innovation score ramping over 5 years. Earlier arrival has compounding benefits across all metrics.</p>
+<p class="info-source">Based on timelines from Commonwealth Fusion Systems (SPARC), ITER project milestones, and IEA energy transition models.</p>`
+    },
+    roboticsMaturity: {
+      title: 'Robotics Maturity',
+      body: `<p><strong>What it controls:</strong> How advanced and widely deployed physical robots become — from warehouse automation to humanoid general-purpose robots. Scale of 1 (niche industrial) to 10 (humanoid robots in daily life).</p>
+<p><strong>Why it matters:</strong> Robotics extends AI from digital tasks into the physical world, affecting manufacturing, logistics, healthcare, agriculture, and domestic labor.</p>
+<p><strong>Model impact:</strong> Drives job displacement in manual/physical occupations. Contributes to leisure time gains (robots handle physical chores). Lower impact on GDP than AI but significant for labor market restructuring.</p>
+<p class="info-source">Informed by IFR World Robotics Report, Tesla Optimus development, and McKinsey automation potential estimates.</p>`
+    },
+    biotechLevel: {
+      title: 'Biotech Advancement',
+      body: `<p><strong>What it controls:</strong> Progress in biotechnology including gene therapy, synthetic biology, longevity research, and AI-driven drug discovery. Scale of 1 (incremental) to 10 (transformative breakthroughs).</p>
+<p><strong>Why it matters:</strong> Biotech advances directly improve healthcare outcomes, extend productive lifespans, and create new industries worth trillions in economic value.</p>
+<p><strong>Model impact:</strong> Strongest contributor to Healthcare QoL (+3 per point). Ramps GDP contribution over a decade (reflecting R&D-to-market timelines). Adds to innovation score and job creation in life sciences sectors.</p>
+<p class="info-source">Based on NIH biotech funding trends, CRISPR therapeutic pipeline data, and PwC pharma industry projections.</p>`
+    },
+    regulationIntensity: {
+      title: 'Regulatory Intensity',
+      body: `<p><strong>What it controls:</strong> The stringency and scope of government regulation on AI and technology. Scale of 1 (laissez-faire) to 10 (comprehensive oversight of all AI systems).</p>
+<p><strong>Why it matters:</strong> Regulation shapes the speed of innovation, market structure, safety outcomes, and inequality. It is among the most debated variables in technology futures.</p>
+<p><strong>Model impact:</strong> <strong>Reduces GDP growth</strong> (compliance costs, slower deployment). <strong>Reduces job creation</strong> (startup formation slows, compliance overhead). <strong>Reduces inequality</strong> (worker protections, antitrust). Improves environmental QoL (emissions regulation) and social mobility (anti-monopoly effects).</p>
+<p class="info-source">Draws from EU AI Act analysis, NIST AI Risk Management Framework, and OECD regulatory impact assessments.</p>`
+    },
+    ubiLevel: {
+      title: 'UBI / Safety Net Level',
+      body: `<p><strong>What it controls:</strong> The generosity of universal basic income and social safety net programs. Scale of 0 (no safety net) to 10 (full UBI covering living expenses).</p>
+<p><strong>Why it matters:</strong> As AI displaces jobs, safety nets determine whether displaced workers face poverty or can reskill and transition. UBI also changes labor market incentives fundamentally.</p>
+<p><strong>Model impact:</strong> <strong>Increases job displacement</strong> (workers exit labor force faster with safety net). <strong>Decreases job creation</strong> (reduced incentive to create new roles). Strongly improves economic security QoL. Reduces inequality (Gini). Increases leisure time when above level 5.</p>
+<p class="info-source">Based on Finnish UBI experiment results (2017-2018), Stockton SEED program data, and Andrew Yang's policy framework analysis.</p>`
+    },
+    educationSpeed: {
+      title: 'Education Adaptation Speed',
+      body: `<p><strong>What it controls:</strong> How quickly education systems retool to prepare workers for an AI-augmented economy — from K-12 curricula to corporate reskilling. Scale of 1 (static, unchanged) to 10 (rapid, continuous adaptation).</p>
+<p><strong>Why it matters:</strong> The gap between technology displacement and workforce readiness is the critical variable determining social stability during technological transitions.</p>
+<p><strong>Model impact:</strong> Drives job creation (skilled workers fill new roles). Strongest contributor to Education QoL (+3 per point). Improves economic security and social mobility. Reduces the leisure penalty from skills mismatch.</p>
+<p class="info-source">Informed by World Economic Forum Future of Jobs surveys, LinkedIn Workforce Report data, and Coursera Global Skills Report.</p>`
+    },
+    tradeOpenness: {
+      title: 'Global Trade Openness',
+      body: `<p><strong>What it controls:</strong> The degree to which international trade in technology, data, and AI services flows freely. Scale of 1 (protectionist/balkanized) to 10 (fully open global markets).</p>
+<p><strong>Why it matters:</strong> Trade openness determines whether AI benefits are concentrated in a few nations or distributed globally, and whether supply chains for chips, data, and talent remain efficient.</p>
+<p><strong>Model impact:</strong> Adds to GDP growth (+0.1%/yr per point). Boosts innovation score through cross-border R&D collaboration (+1.5 per point). Limited direct effect on jobs or inequality in this model.</p>
+<p class="info-source">Based on WTO trade statistics, CHIPS Act supply chain analysis, and Brookings Institution globalization research.</p>`
+    },
+    smbAccess: {
+      title: 'Small Business AI Access',
+      body: `<p><strong>What it controls:</strong> How easily small and medium businesses can adopt AI tools — through affordable APIs, open-source models, and low-code platforms. Scale of 1 (enterprise-only) to 10 (fully democratized).</p>
+<p><strong>Why it matters:</strong> When only large firms can afford AI, market concentration increases and inequality widens. When SMBs have equal access, competition thrives and economic benefits are distributed more broadly.</p>
+<p><strong>Model impact:</strong> Drives job creation (SMBs are the largest employers). Reduces inequality (Gini -0.4% per point). Improves social mobility QoL (+3.5 per point) and digital access QoL (+1.5 per point). Contributes to innovation score.</p>
+<p class="info-source">Based on SBA small business employment data, Stripe/Shopify AI tool adoption reports, and NBER competition research.</p>`
+    },
+    infrastructure: {
+      title: 'Infrastructure Investment',
+      body: `<p><strong>What it controls:</strong> Government and private investment in physical and digital infrastructure — broadband, data centers, power grid, transportation. Scale of 1 (underinvested) to 10 (massive buildout).</p>
+<p><strong>Why it matters:</strong> AI and advanced computing require enormous infrastructure — from GPU clusters to electrical grid capacity. Infrastructure determines the ceiling on how fast technology can actually be deployed.</p>
+<p><strong>Model impact:</strong> Adds to GDP growth (+0.08%/yr per point). Improves healthcare, environmental, and digital access QoL. Supports economic security. Essential enabler for other technology trajectories.</p>
+<p class="info-source">Informed by ASCE Infrastructure Report Card, IEA World Energy Investment Report, and Bipartisan Infrastructure Law projections.</p>`
+    },
+    inflationRate: {
+      title: 'Inflation / Deflation Rate',
+      body: `<p><strong>What it controls:</strong> The average annual inflation rate over the projection period. Range of 0% (deflation) to 8% (high inflation). Default is 3% (near-neutral).</p>
+<p><strong>Why it matters:</strong> Inflation erodes purchasing power and creates economic uncertainty. Deflation can suppress investment. Both extremes harm growth, but they affect different populations asymmetrically.</p>
+<p><strong>Model impact:</strong> At <strong>3% (neutral)</strong>: no effect on GDP. <strong>Above 3%</strong>: drags GDP growth (-0.3%/yr per point above 3%) and increases inequality (erodes lower-income purchasing power). <strong>Below 3%</strong>: mild GDP boost (+0.1%/yr per point below 3%) but risks deflationary spiral at very low levels.</p>
+<p class="info-source">Based on Federal Reserve inflation targeting framework, BLS CPI data, and IMF World Economic Outlook inflation models.</p>`
+    }
+  },
+  chart: {
+    gdp: {
+      title: 'U.S. GDP Trajectory',
+      body: `<p><strong>What it shows:</strong> Projected U.S. GDP in trillions from 2025 to 2045, compared against a 2.5% baseline growth rate (dashed line). Starting value: $28T (2025).</p>
+<p><strong>How it is calculated:</strong> Each year compounds the previous GDP by a dynamic growth rate. The rate starts at a 2.5% base and is modified by:</p>
+<p>• <strong>AI effect:</strong> aiCapability × aiAdoption × 0.3% (largest contributor)<br>
+• <strong>Thermo computing:</strong> thermoComputing × 0.2%/yr, ramping over 8 years<br>
+• <strong>Quantum:</strong> +0.5%/yr after quantum arrival year<br>
+• <strong>Fusion:</strong> +0.8%/yr after fusion arrival year<br>
+• <strong>Biotech:</strong> biotechLevel × 0.15%/yr, ramping over 10 years<br>
+• <strong>Trade & infra:</strong> tradeOpenness × 0.1% + infrastructure × 0.08%<br>
+• <strong>Regulation drag:</strong> -(10 - regulationIntensity) × 0.1%<br>
+• <strong>Inflation:</strong> deviation from 3% baseline penalizes or boosts growth</p>
+<p>Growth rate is clamped between 0.5% and 12% annually.</p>
+<p class="info-source">Baseline 2.5% derived from CBO long-term GDP projections. Model structure inspired by Solow growth model with technology multipliers.</p>`
+    },
+    jobs: {
+      title: 'Jobs Impact',
+      body: `<p><strong>What it shows:</strong> Net job creation and displacement in millions at 5-year intervals (2025-2045). Red bars show displaced jobs, green bars show created jobs, and the yellow line shows the net.</p>
+<p><strong>How displacement is calculated:</strong></p>
+<p>• Base displacement = (aiCapability × 0.8 + roboticsMaturity × 0.6 + aiAdoption × 0.5) × time factor<br>
+• <strong>UBI amplifier:</strong> higher UBI increases displacement (1 + ubiLevel × 4%) as workers exit the labor force faster with safety nets</p>
+<p><strong>How creation is calculated:</strong></p>
+<p>• <strong>AI-driven creation:</strong> (aiCapability × 1.2 + aiAdoption × 1.0) × time factor — more AI creates more new industries and roles<br>
+• <strong>Traditional drivers:</strong> education, SMB access, infrastructure, biotech<br>
+• <strong>Regulation drag:</strong> -regulationIntensity × 0.6 per time unit (compliance burden)<br>
+• <strong>UBI drag:</strong> -ubiLevel × 0.4 per time unit (reduced incentive for new roles)<br>
+• <strong>Tech boosts:</strong> +2M after quantum arrival, thermo ramp, +3M after fusion arrival</p>
+<p class="info-source">Displacement estimates calibrated against McKinsey Global Institute (2023) automation projections. Creation model reflects historical patterns of technology-driven job formation.</p>`
+    },
+    qol: {
+      title: 'Quality of Life Index',
+      body: `<p><strong>What it shows:</strong> A radar chart scoring six dimensions of quality of life on a 0-100 scale, representing projected 2045 outcomes.</p>
+<p><strong>How each dimension is calculated:</strong></p>
+<p>• <strong>Healthcare</strong> (base 55): +aiCapability × 2.5, +infrastructure × 1.5, +ubiLevel × 1, +biotechLevel × 3<br>
+• <strong>Environment</strong> (base 40): +20 if fusion by 2040, +10 if by 2050, +regulationIntensity × 2, +infrastructure, +biotech<br>
+• <strong>Education</strong> (base 50): +educationSpeed × 3, +aiCapability, +smbAccess × 0.5<br>
+• <strong>Econ Security</strong> (base 40): +ubiLevel × 5, +educationSpeed × 1.5, +infrastructure<br>
+• <strong>Social Mobility</strong> (base 35): +smbAccess × 3.5, +educationSpeed × 2.5, -(10 - regulationIntensity) × 0.5<br>
+• <strong>Digital Access</strong> (base 60): +infrastructure × 2, +smbAccess × 1.5, +aiAdoption</p>
+<p>All dimensions capped at 100.</p>
+<p class="info-source">Dimension weights inspired by UNDP Human Development Index methodology and OECD Better Life Index framework.</p>`
+    },
+    leisure: {
+      title: 'Leisure Time',
+      body: `<p><strong>What it shows:</strong> Projected average weekly leisure hours from 2025 to 2045. Starting baseline: 35 hours/week (approximate U.S. average for employed adults).</p>
+<p><strong>How it is calculated:</strong></p>
+<p>• <strong>AI/robotics effect:</strong> average of (aiCapability + roboticsMaturity + aiAdoption) / 3 × time × 1.5 — automation reduces required work hours<br>
+• <strong>UBI effect:</strong> +ubiLevel × time × 0.8 — safety nets allow voluntary work reduction<br>
+• <strong>Education penalty:</strong> -(10 - educationSpeed) × time × 0.3 — skills mismatch forces longer hours<br>
+• <strong>Safety net threshold:</strong> if UBI ≥ 5, +time × 1.5 hours; if below, -time × 0.5 (anxiety reduces leisure quality)</p>
+<p>Clamped between 30 and 60 hours/week.</p>
+<p class="info-source">Baseline from BLS American Time Use Survey. Automation-leisure relationship based on Keynes (1930) projections and contemporary four-day workweek trial data (UK, Iceland).</p>`
+    },
+    inequality: {
+      title: 'Income Inequality',
+      body: `<p><strong>What it shows:</strong> Projected Gini coefficient from 2025 to 2045. Starting value: 0.390 (approximate current U.S. Gini). Lower is more equal; higher is more unequal.</p>
+<p><strong>How it is calculated:</strong></p>
+<p>• <strong>AI pressure:</strong> +aiCapability × 0.4% per time unit (AI benefits accrue to capital owners first)<br>
+• <strong>Regulation effect:</strong> -regulationIntensity × 0.2% (antitrust, labor protections)<br>
+• <strong>UBI effect:</strong> -ubiLevel × 0.6% (direct income floor)<br>
+• <strong>SMB access:</strong> -smbAccess × 0.4% (distributed economic participation)<br>
+• <strong>Inflation effect:</strong> +(inflationRate - 3) × 0.2% (high inflation erodes lower-income purchasing power)</p>
+<p>Gini clamped between 0.20 and 0.65.</p>
+<p class="info-source">Baseline Gini from U.S. Census Bureau (2023). Model structure informed by Piketty's r > g framework and World Bank inequality research.</p>`
+    },
+    innovation: {
+      title: 'Innovation Index',
+      body: `<p><strong>What it shows:</strong> A composite innovation score (0-100) tracking the pace and breadth of technological breakthroughs from 2025 to 2045.</p>
+<p><strong>How it is calculated:</strong></p>
+<p>• <strong>AI base</strong> (base 30): (aiCapability + aiAdoption) × 3, ramping from 30% to 100% weight over time<br>
+• <strong>Quantum boost:</strong> +8 points after quantum arrival, ramping over 5 years<br>
+• <strong>Thermo boost:</strong> thermoComputing × 2.5, ramping from 20% to 100% — <strong>larger than quantum</strong><br>
+• <strong>Fusion boost:</strong> +10 points after fusion arrival, ramping over 5 years<br>
+• <strong>Biotech:</strong> biotechLevel × 1.5, ramping from 20% to 100%<br>
+• <strong>Trade openness:</strong> +tradeOpenness × 1.5<br>
+• <strong>Regulation drag:</strong> -regulationIntensity × 1.2<br>
+• <strong>SMB access:</strong> +smbAccess × 1.0</p>
+<p>Score clamped between 10 and 100.</p>
+<p class="info-source">Composite methodology inspired by Global Innovation Index (WIPO), Bloomberg Innovation Index, and Nature Index research output metrics.</p>`
+    }
+  }
+};
+
+function showInfo(category, key) {
+  const data = INFO_DATA[category]?.[key];
+  if (!data) return;
+  document.getElementById('infoTitle').textContent = data.title;
+  document.getElementById('infoBody').innerHTML = data.body;
+  document.getElementById('infoOverlay').classList.add('active');
+}
+
+function closeInfo() {
+  document.getElementById('infoOverlay').classList.remove('active');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeInfo();
+});
+
+// ─── CONFIG ────────────────────────────────────────────
+const YEARS = [2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045];
+const INTERVAL_YEARS = [2025,2030,2035,2040,2045];
+const QOL_DIMS = ['Healthcare','Environment','Education','Econ Security','Social Mobility','Digital Access'];
+
+const SLIDER_KEYS = [
+  'aiCapability','aiAdoption','quantumTimeline','thermoComputing','fusionArrival','roboticsMaturity','biotechLevel',
+  'regulationIntensity','ubiLevel','educationSpeed','tradeOpenness',
+  'smbAccess','infrastructure','inflationRate'
+];
+
+const PRESETS = {
+  walledGarden: { aiCapability:5, aiAdoption:4, quantumTimeline:2038, thermoComputing:3, fusionArrival:2050, roboticsMaturity:4, biotechLevel:4, regulationIntensity:8, ubiLevel:6, educationSpeed:5, tradeOpenness:5, smbAccess:4, infrastructure:6, inflationRate:4 },
+  openFrontier: { aiCapability:8, aiAdoption:8, quantumTimeline:2032, thermoComputing:7, fusionArrival:2042, roboticsMaturity:7, biotechLevel:7, regulationIntensity:3, ubiLevel:4, educationSpeed:7, tradeOpenness:8, smbAccess:9, infrastructure:7, inflationRate:2 },
+  stateMachine: { aiCapability:9, aiAdoption:9, quantumTimeline:2030, thermoComputing:8, fusionArrival:2040, roboticsMaturity:9, biotechLevel:8, regulationIntensity:2, ubiLevel:2, educationSpeed:4, tradeOpenness:6, smbAccess:3, infrastructure:8, inflationRate:3 },
+  wildWest:     { aiCapability:6, aiAdoption:5, quantumTimeline:2040, thermoComputing:4, fusionArrival:2055, roboticsMaturity:5, biotechLevel:4, regulationIntensity:9, ubiLevel:3, educationSpeed:3, tradeOpenness:4, smbAccess:6, infrastructure:4, inflationRate:5 }
+};
+
+let currentArchetype = null;
+let compareMode = false;
+let charts = {};
+let compareCharts = {};
+
+// ─── SLIDER I/O ────────────────────────────────────────
+function getSliders() {
+  const s = {};
+  SLIDER_KEYS.forEach(k => { s[k] = parseInt(document.getElementById('slider-' + k).value); });
+  return s;
+}
+
+function setSliders(preset) {
+  SLIDER_KEYS.forEach(k => {
+    const el = document.getElementById('slider-' + k);
+    el.value = preset[k];
+    document.getElementById('val-' + k).textContent = k === 'inflationRate' ? preset[k] + '%' : preset[k];
+  });
+}
+
+function onSliderChange() {
+  SLIDER_KEYS.forEach(k => {
+    const v = document.getElementById('slider-' + k).value;
+    document.getElementById('val-' + k).textContent = k === 'inflationRate' ? v + '%' : v;
+  });
+  checkModified();
+  updateAll();
+}
+
+function checkModified() {
+  if (!currentArchetype) return;
+  const s = getSliders();
+  const p = PRESETS[currentArchetype];
+  let modified = false;
+  SLIDER_KEYS.forEach(k => { if (s[k] !== p[k]) modified = true; });
+  const card = document.querySelector(`[data-archetype="${currentArchetype}"]`);
+  if (card) card.classList.toggle('modified', modified);
+}
+
+// ─── ARCHETYPE SELECTION ────────────────────────────────
+function selectArchetype(name) {
+  currentArchetype = name;
+  document.querySelectorAll('.archetype-card').forEach(c => {
+    c.classList.remove('selected', 'modified');
+  });
+  document.querySelector(`[data-archetype="${name}"]`).classList.add('selected');
+  setSliders(PRESETS[name]);
+  updateAll();
+}
+
+// ─── MODELS ─────────────────────────────────────────────
+function calcGDP(s) {
+  const data = [];
+  let gdp = 28;
+  for (const yr of YEARS) {
+    if (yr === 2025) { data.push(gdp); continue; }
+    const base = 0.025;
+    const ai = s.aiCapability * s.aiAdoption * 0.003;
+    const energy = yr > s.fusionArrival ? 0.008 : 0;
+    const quantum = yr > s.quantumTimeline ? 0.005 : 0;
+    const thermo = s.thermoComputing * 0.002 * Math.min(1, (yr - 2025) / 8); // ramps faster, bigger impact than quantum
+    const regDrag = (10 - s.regulationIntensity) * 0.001;
+    const trade = s.tradeOpenness * 0.001;
+    const infra = s.infrastructure * 0.0008;
+    const biotech = s.biotechLevel * 0.0015 * Math.min(1, (yr - 2025) / 10);
+    // Inflation drag: 3% is neutral, above 3% drags growth, below 3% modest boost (deflation risk)
+    const inflDev = s.inflationRate - 3;
+    const inflEffect = inflDev > 0 ? -inflDev * 0.003 : inflDev * 0.001;
+    let rate = base + ai + energy + quantum + thermo - regDrag + trade + infra + biotech + inflEffect;
+    rate = Math.max(0.005, Math.min(0.12, rate));
+    gdp *= (1 + rate);
+    data.push(parseFloat(gdp.toFixed(2)));
+  }
+  return data;
+}
+
+function calcBaseline() {
+  const data = [];
+  let gdp = 28;
+  for (const yr of YEARS) {
+    if (yr === 2025) { data.push(gdp); continue; }
+    gdp *= 1.025;
+    data.push(parseFloat(gdp.toFixed(2)));
+  }
+  return data;
+}
+
+function calcJobs(s) {
+  const displaced = [];
+  const created = [];
+  for (const yr of INTERVAL_YEARS) {
+    const t = (yr - 2025) / 20;
+    // UBI increases displacement (workers exit labor force faster with safety net)
+    const ubiDispBoost = 1 + s.ubiLevel * 0.04;
+    const disp = -(s.aiCapability * 0.8 + s.roboticsMaturity * 0.6 + s.aiAdoption * 0.5) * t * (1 + t) * ubiDispBoost;
+    // More AI & adoption = more new jobs created (AI creates new industries)
+    const aiCreation = (s.aiCapability * 1.2 + s.aiAdoption * 1.0) * t * (1 + t * 0.8);
+    // Regulation reduces job creation (compliance burden, slower startups)
+    const regDrag = s.regulationIntensity * 0.6 * t;
+    // UBI reduces job creation (less incentive to create new roles)
+    const ubiCreDrag = s.ubiLevel * 0.4 * t;
+    let cre = aiCreation + (s.educationSpeed * 0.7 + s.smbAccess * 0.5 + s.infrastructure * 0.3 + s.biotechLevel * 0.4) * t * (1 + t * 0.5) - regDrag - ubiCreDrag;
+    if (yr > s.quantumTimeline) cre += 2;
+    const thermoBoost = s.thermoComputing * 0.4 * t;
+    cre += thermoBoost;
+    if (yr > s.fusionArrival) cre += 3;
+    displaced.push(parseFloat(Math.min(0, disp).toFixed(1)));
+    created.push(parseFloat(Math.max(0, cre).toFixed(1)));
+  }
+  return { displaced, created, net: displaced.map((d, i) => parseFloat((d + created[i]).toFixed(1))) };
+}
+
+function calcQoL(s) {
+  const healthcare = Math.min(100, 55 + s.aiCapability * 2.5 + s.infrastructure * 1.5 + s.ubiLevel * 1 + s.biotechLevel * 3);
+  const environment = Math.min(100, 40 + (s.fusionArrival <= 2040 ? 20 : s.fusionArrival <= 2050 ? 10 : 0) + s.regulationIntensity * 2 + s.infrastructure * 1 + s.biotechLevel * 1);
+  const education = Math.min(100, 50 + s.educationSpeed * 3 + s.aiCapability * 1 + s.smbAccess * 0.5);
+  const econSecurity = Math.min(100, 40 + s.ubiLevel * 5 + s.educationSpeed * 1.5 + s.infrastructure * 1);
+  const socialMobility = Math.min(100, 35 + s.smbAccess * 3.5 + s.educationSpeed * 2.5 - (10 - s.regulationIntensity) * 0.5);
+  const digitalAccess = Math.min(100, 60 + s.infrastructure * 2 + s.smbAccess * 1.5 + s.aiAdoption * 1);
+  return [healthcare, environment, education, econSecurity, socialMobility, digitalAccess].map(v => parseFloat(v.toFixed(1)));
+}
+
+function calcLeisure(s) {
+  const data = [];
+  for (const yr of YEARS) {
+    const t = (yr - 2025) / 20;
+    const aiEffect = (s.aiCapability + s.roboticsMaturity + s.aiAdoption) / 3 * t * 1.5;
+    const ubiEffect = s.ubiLevel * t * 0.8;
+    const eduPenalty = (10 - s.educationSpeed) * t * 0.3;
+    const safetyEffect = s.ubiLevel >= 5 ? t * 1.5 : -t * 0.5;
+    let leisure = 35 + aiEffect + ubiEffect - eduPenalty + safetyEffect;
+    leisure = Math.max(30, Math.min(60, leisure));
+    data.push(parseFloat(leisure.toFixed(1)));
+  }
+  return data;
+}
+
+function calcInequality(s) {
+  const data = [];
+  for (const yr of YEARS) {
+    const t = (yr - 2025) / 20;
+    const aiPressure = s.aiCapability * 0.004 * t;
+    const regEffect = s.regulationIntensity * 0.002 * t;
+    const ubiEffect = s.ubiLevel * 0.006 * t;
+    const smbEffect = s.smbAccess * 0.004 * t;
+    // High inflation increases inequality (erodes purchasing power of lower earners)
+    const inflEffect = (s.inflationRate - 3) * 0.002 * t;
+    let gini = 0.39 + aiPressure - regEffect - ubiEffect - smbEffect + inflEffect;
+    gini = Math.max(0.2, Math.min(0.65, gini));
+    data.push(parseFloat(gini.toFixed(3)));
+  }
+  return data;
+}
+
+function calcInnovation(s) {
+  const data = [];
+  for (const yr of YEARS) {
+    const t = (yr - 2025) / 20;
+    const aiBase = (s.aiCapability + s.aiAdoption) * 3 * (0.3 + t * 0.7);
+    const quantumBoost = yr > s.quantumTimeline ? 8 * Math.min(1, (yr - s.quantumTimeline) / 5) : 0;
+    // Thermodynamic computing: bigger impact than quantum, ramps continuously
+    const thermoBoost = s.thermoComputing * 2.5 * (0.2 + t * 0.8);
+    const fusionBoost = yr > s.fusionArrival ? 10 * Math.min(1, (yr - s.fusionArrival) / 5) : 0;
+    const biotechBoost = s.biotechLevel * 1.5 * (0.2 + t * 0.8);
+    const tradeEffect = s.tradeOpenness * 1.5;
+    const regDrag = s.regulationIntensity * 1.2;
+    const smbBoost = s.smbAccess * 1;
+    let score = 30 + aiBase + quantumBoost + thermoBoost + fusionBoost + biotechBoost + tradeEffect - regDrag + smbBoost;
+    score = Math.max(10, Math.min(100, score));
+    data.push(parseFloat(score.toFixed(1)));
+  }
+  return data;
+}
+
+function calcAllOutputs(s) {
+  return {
+    gdp: calcGDP(s),
+    baseline: calcBaseline(),
+    jobs: calcJobs(s),
+    qol: calcQoL(s),
+    leisure: calcLeisure(s),
+    inequality: calcInequality(s),
+    innovation: calcInnovation(s)
+  };
+}
+
+// ─── CHART DEFAULTS ─────────────────────────────────────
+Chart.defaults.color = '#8a8d9a';
+Chart.defaults.borderColor = '#2a2d3a';
+Chart.defaults.font.family = "'Satoshi', sans-serif";
+Chart.defaults.font.size = 10;
+Chart.defaults.animation.duration = 600;
+Chart.defaults.plugins.legend.labels.boxWidth = 10;
+Chart.defaults.plugins.legend.labels.padding = 8;
+
+function updateChartDefaults() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  Chart.defaults.color = isDark ? '#8a8d9a' : '#6b7280';
+  Chart.defaults.borderColor = isDark ? '#2a2d3a' : '#d1d5db';
+}
+
+function chartGridColor() {
+  return document.documentElement.getAttribute('data-theme') !== 'light' ? '#2a2d3a' : '#e5e7eb';
+}
+
+// ─── CREATE CHARTS ──────────────────────────────────────
+function createCharts() {
+  const s = getSliders();
+  const o = calcAllOutputs(s);
+  const gc = chartGridColor();
+
+  charts.gdp = new Chart(document.getElementById('chartGDP'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [
+        { label: 'Projected GDP ($T)', data: o.gdp, borderColor: '#20808D', backgroundColor: 'rgba(32,128,141,0.1)', fill: true, tension: 0.3, pointRadius: 0 },
+        { label: 'Baseline (2.5%)', data: o.baseline, borderColor: '#8a8d9a', borderDash: [5,5], fill: false, tension: 0.3, pointRadius: 0 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: '$ Trillions' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+
+  charts.jobs = new Chart(document.getElementById('chartJobs'), {
+    type: 'bar',
+    data: {
+      labels: INTERVAL_YEARS,
+      datasets: [
+        { label: 'Displaced (M)', data: o.jobs.displaced, backgroundColor: 'rgba(248,113,113,0.7)', stack: 'stack' },
+        { label: 'Created (M)', data: o.jobs.created, backgroundColor: 'rgba(52,211,153,0.7)', stack: 'stack' },
+        { label: 'Net (M)', data: o.jobs.net, type: 'line', borderColor: '#FFC553', backgroundColor: 'transparent', pointRadius: 3, tension: 0.3, order: 0 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Millions' }, grid: { color: gc } }, x: { stacked: true, grid: { color: gc } } } }
+  });
+
+  charts.qol = new Chart(document.getElementById('chartQoL'), {
+    type: 'radar',
+    data: {
+      labels: QOL_DIMS,
+      datasets: [{
+        label: 'Quality of Life',
+        data: o.qol,
+        borderColor: '#1B474D',
+        backgroundColor: 'rgba(27,71,77,0.25)',
+        pointBackgroundColor: '#20808D',
+        pointRadius: 3
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, backdropColor: 'transparent' }, grid: { color: gc }, angleLines: { color: gc }, pointLabels: { font: { size: 9 } } } } }
+  });
+
+  charts.leisure = new Chart(document.getElementById('chartLeisure'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{ label: 'Weekly Leisure Hours', data: o.leisure, borderColor: '#BCE2E7', backgroundColor: 'rgba(188,226,231,0.1)', fill: true, tension: 0.3, pointRadius: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Hours/week' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+
+  charts.inequality = new Chart(document.getElementById('chartInequality'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{ label: 'Gini Coefficient', data: o.inequality, borderColor: '#944454', backgroundColor: 'rgba(148,68,84,0.1)', fill: true, tension: 0.3, pointRadius: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Gini' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+
+  charts.innovation = new Chart(document.getElementById('chartInnovation'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{ label: 'Innovation Score', data: o.innovation, borderColor: '#FFC553', backgroundColor: 'rgba(255,197,83,0.15)', fill: true, tension: 0.3, pointRadius: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, title: { display: true, text: 'Score' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+}
+
+// ─── CREATE COMPARE CHARTS ──────────────────────────────
+function createCompareCharts() {
+  const gc = chartGridColor();
+  const emptyY = YEARS.map(() => 0);
+  const emptyI = INTERVAL_YEARS.map(() => 0);
+
+  compareCharts.gdp = new Chart(document.getElementById('cmpGDP'), {
+    type: 'line',
+    data: { labels: YEARS, datasets: [
+      { label: 'Scenario A', data: [...emptyY], borderColor: '#20808D', tension: 0.3, pointRadius: 0 },
+      { label: 'Scenario B', data: [...emptyY], borderColor: '#FFC553', tension: 0.3, pointRadius: 0 },
+      { label: 'Baseline', data: calcBaseline(), borderColor: '#8a8d9a', borderDash: [5,5], tension: 0.3, pointRadius: 0 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: '$ Trillions' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+
+  compareCharts.jobs = new Chart(document.getElementById('cmpJobs'), {
+    type: 'line',
+    data: { labels: INTERVAL_YEARS, datasets: [
+      { label: 'A Net Jobs (M)', data: [...emptyI], borderColor: '#20808D', tension: 0.3, pointRadius: 3 },
+      { label: 'B Net Jobs (M)', data: [...emptyI], borderColor: '#FFC553', tension: 0.3, pointRadius: 3 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Millions' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+
+  compareCharts.qol = new Chart(document.getElementById('cmpQoL'), {
+    type: 'radar',
+    data: { labels: QOL_DIMS, datasets: [
+      { label: 'Scenario A', data: [0,0,0,0,0,0], borderColor: '#20808D', backgroundColor: 'rgba(32,128,141,0.15)', pointRadius: 2 },
+      { label: 'Scenario B', data: [0,0,0,0,0,0], borderColor: '#FFC553', backgroundColor: 'rgba(255,197,83,0.15)', pointRadius: 2 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, backdropColor: 'transparent' }, grid: { color: gc }, angleLines: { color: gc }, pointLabels: { font: { size: 9 } } } } }
+  });
+
+  compareCharts.leisure = new Chart(document.getElementById('cmpLeisure'), {
+    type: 'line',
+    data: { labels: YEARS, datasets: [
+      { label: 'Scenario A', data: [...emptyY], borderColor: '#20808D', tension: 0.3, pointRadius: 0 },
+      { label: 'Scenario B', data: [...emptyY], borderColor: '#FFC553', tension: 0.3, pointRadius: 0 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Hours/week' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+
+  compareCharts.inequality = new Chart(document.getElementById('cmpInequality'), {
+    type: 'line',
+    data: { labels: YEARS, datasets: [
+      { label: 'Scenario A', data: [...emptyY], borderColor: '#20808D', tension: 0.3, pointRadius: 0 },
+      { label: 'Scenario B', data: [...emptyY], borderColor: '#FFC553', tension: 0.3, pointRadius: 0 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Gini' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+
+  compareCharts.innovation = new Chart(document.getElementById('cmpInnovation'), {
+    type: 'line',
+    data: { labels: YEARS, datasets: [
+      { label: 'Scenario A', data: [...emptyY], borderColor: '#20808D', backgroundColor: 'rgba(32,128,141,0.08)', fill: true, tension: 0.3, pointRadius: 0 },
+      { label: 'Scenario B', data: [...emptyY], borderColor: '#FFC553', backgroundColor: 'rgba(255,197,83,0.08)', fill: true, tension: 0.3, pointRadius: 0 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, title: { display: true, text: 'Score' }, grid: { color: gc } }, x: { grid: { color: gc } } } }
+  });
+}
+
+// ─── UPDATE CHARTS ──────────────────────────────────────
+function updateCharts() {
+  const s = getSliders();
+  const o = calcAllOutputs(s);
+
+  charts.gdp.data.datasets[0].data = o.gdp;
+  charts.gdp.data.datasets[1].data = o.baseline;
+  charts.gdp.update();
+
+  charts.jobs.data.datasets[0].data = o.jobs.displaced;
+  charts.jobs.data.datasets[1].data = o.jobs.created;
+  charts.jobs.data.datasets[2].data = o.jobs.net;
+  charts.jobs.update();
+
+  charts.qol.data.datasets[0].data = o.qol;
+  charts.qol.update();
+
+  charts.leisure.data.datasets[0].data = o.leisure;
+  charts.leisure.update();
+
+  charts.inequality.data.datasets[0].data = o.inequality;
+  charts.inequality.update();
+
+  charts.innovation.data.datasets[0].data = o.innovation;
+  charts.innovation.update();
+}
+
+function getCompareSliders(side) {
+  const sel = document.getElementById('compareSelect' + side);
+  const val = sel.value;
+  if (val === 'current') return getSliders();
+  return PRESETS[val];
+}
+
+function updateCompareCharts() {
+  const sA = getCompareSliders('A');
+  const sB = getCompareSliders('B');
+  const oA = calcAllOutputs(sA);
+  const oB = calcAllOutputs(sB);
+
+  compareCharts.gdp.data.datasets[0].data = oA.gdp;
+  compareCharts.gdp.data.datasets[1].data = oB.gdp;
+  compareCharts.gdp.data.datasets[2].data = oA.baseline;
+  compareCharts.gdp.update();
+
+  compareCharts.jobs.data.datasets[0].data = oA.jobs.net;
+  compareCharts.jobs.data.datasets[1].data = oB.jobs.net;
+  compareCharts.jobs.update();
+
+  compareCharts.qol.data.datasets[0].data = oA.qol;
+  compareCharts.qol.data.datasets[1].data = oB.qol;
+  compareCharts.qol.update();
+
+  compareCharts.leisure.data.datasets[0].data = oA.leisure;
+  compareCharts.leisure.data.datasets[1].data = oB.leisure;
+  compareCharts.leisure.update();
+
+  compareCharts.inequality.data.datasets[0].data = oA.inequality;
+  compareCharts.inequality.data.datasets[1].data = oB.inequality;
+  compareCharts.inequality.update();
+
+  compareCharts.innovation.data.datasets[0].data = oA.innovation;
+  compareCharts.innovation.data.datasets[1].data = oB.innovation;
+  compareCharts.innovation.update();
+
+  // Delta row
+  const gdpDelta = oA.gdp[oA.gdp.length - 1] - oB.gdp[oB.gdp.length - 1];
+  const jobsDelta = oA.jobs.net[oA.jobs.net.length - 1] - oB.jobs.net[oB.jobs.net.length - 1];
+  const qolAvgA = oA.qol.reduce((a, b) => a + b, 0) / oA.qol.length;
+  const qolAvgB = oB.qol.reduce((a, b) => a + b, 0) / oB.qol.length;
+  const qolDelta = qolAvgA - qolAvgB;
+  const ineqDelta = oA.inequality[oA.inequality.length - 1] - oB.inequality[oB.inequality.length - 1];
+
+  const deltaRow = document.getElementById('deltaRow');
+  deltaRow.innerHTML = `
+    <div class="delta-card">
+      <div class="delta-label">2045 GDP Diff</div>
+      <div class="delta-value ${gdpDelta >= 0 ? 'delta-positive' : 'delta-negative'}">${gdpDelta >= 0 ? '+' : ''}$${Math.abs(gdpDelta).toFixed(1)}T</div>
+    </div>
+    <div class="delta-card">
+      <div class="delta-label">Net Jobs Diff (2045)</div>
+      <div class="delta-value ${jobsDelta >= 0 ? 'delta-positive' : 'delta-negative'}">${jobsDelta >= 0 ? '+' : ''}${jobsDelta.toFixed(1)}M</div>
+    </div>
+    <div class="delta-card">
+      <div class="delta-label">Avg QoL Diff</div>
+      <div class="delta-value ${qolDelta >= 0 ? 'delta-positive' : 'delta-negative'}">${qolDelta >= 0 ? '+' : ''}${qolDelta.toFixed(1)}</div>
+    </div>
+    <div class="delta-card">
+      <div class="delta-label">Gini Diff (2045)</div>
+      <div class="delta-value ${ineqDelta <= 0 ? 'delta-positive' : 'delta-negative'}">${ineqDelta >= 0 ? '+' : ''}${ineqDelta.toFixed(3)}</div>
+    </div>
+  `;
+}
+
+function onCompareArchetypeChange(side) {
+  updateCompareCharts();
+}
+
+// ─── SUMMARY ────────────────────────────────────────────
+function updateSummary() {
+  const s = getSliders();
+  const o = calcAllOutputs(s);
+  const gdp2045 = o.gdp[o.gdp.length - 1];
+  const gini2045 = o.inequality[o.inequality.length - 1];
+  const leisure2045 = o.leisure[o.leisure.length - 1];
+  const innovation2045 = o.innovation[o.innovation.length - 1];
+  const netJobs2045 = o.jobs.net[o.jobs.net.length - 1];
+  const qolAvg = (o.qol.reduce((a, b) => a + b, 0) / o.qol.length).toFixed(0);
+
+  // Find peak displacement year
+  let peakDispIdx = 0;
+  o.jobs.displaced.forEach((v, i) => { if (v < o.jobs.displaced[peakDispIdx]) peakDispIdx = i; });
+  const peakDispYear = INTERVAL_YEARS[peakDispIdx];
+
+  // Build narrative
+  const aiLevel = s.aiCapability >= 7 ? 'aggressive' : s.aiCapability >= 4 ? 'moderate' : 'cautious';
+  const safetyLevel = s.ubiLevel >= 6 ? 'strong safety nets' : s.ubiLevel >= 3 ? 'modest safety nets' : 'minimal safety nets';
+  const regLevel = s.regulationIntensity >= 7 ? 'heavy regulation' : s.regulationIntensity >= 4 ? 'moderate regulation' : 'light regulation';
+  const ineqDir = gini2045 > 0.39 ? 'rising inequality' : gini2045 < 0.36 ? 'declining inequality' : 'stable inequality';
+  const bioLevel = s.biotechLevel >= 7 ? 'high biotech advancement' : s.biotechLevel >= 4 ? 'moderate biotech progress' : 'limited biotech development';
+
+  let narrative = `In this scenario, ${aiLevel} AI adoption combined with ${safetyLevel}, ${regLevel}, and ${bioLevel} leads to `;
+  if (gdp2045 > 50) narrative += `strong economic growth reaching $${gdp2045.toFixed(1)}T GDP by 2045. `;
+  else if (gdp2045 > 40) narrative += `moderate economic growth to $${gdp2045.toFixed(1)}T GDP by 2045. `;
+  else narrative += `slower economic growth at $${gdp2045.toFixed(1)}T GDP by 2045. `;
+  narrative += `The labor market faces peak displacement around ${peakDispYear} with a net impact of ${netJobs2045 > 0 ? '+' : ''}${netJobs2045.toFixed(1)}M jobs by 2045. `;
+  narrative += `Society trends toward ${ineqDir} (Gini: ${gini2045.toFixed(3)}) with average weekly leisure reaching ${leisure2045.toFixed(0)} hours.`;
+
+  document.getElementById('summaryText').textContent = narrative;
+  document.getElementById('summaryStats').innerHTML = `
+    <div class="summary-stat"><span class="summary-stat-label">2045 GDP</span><span class="summary-stat-value">$${gdp2045.toFixed(1)}T</span></div>
+    <div class="summary-stat"><span class="summary-stat-label">Net Jobs 2045</span><span class="summary-stat-value">${netJobs2045 > 0 ? '+' : ''}${netJobs2045.toFixed(1)}M</span></div>
+    <div class="summary-stat"><span class="summary-stat-label">Gini 2045</span><span class="summary-stat-value">${gini2045.toFixed(3)}</span></div>
+    <div class="summary-stat"><span class="summary-stat-label">QoL Avg</span><span class="summary-stat-value">${qolAvg}/100</span></div>
+    <div class="summary-stat"><span class="summary-stat-label">Leisure</span><span class="summary-stat-value">${leisure2045.toFixed(0)} hrs/wk</span></div>
+    <div class="summary-stat"><span class="summary-stat-label">Innovation</span><span class="summary-stat-value">${innovation2045.toFixed(0)}/100</span></div>
+    <div class="summary-stat"><span class="summary-stat-label">Peak Displacement</span><span class="summary-stat-value">${peakDispYear}</span></div>
+  `;
+}
+
+// ─── UPDATE ALL ─────────────────────────────────────────
+function updateAll() {
+  updateCharts();
+  updateSummary();
+  if (compareMode) updateCompareCharts();
+}
+
+// ─── COMPARE TOGGLE ─────────────────────────────────────
+function toggleCompareMode() {
+  compareMode = !compareMode;
+  document.getElementById('compareToggle').classList.toggle('active', compareMode);
+  document.getElementById('normalWrapper').classList.toggle('hidden', compareMode);
+  document.getElementById('compareWrapper').classList.toggle('active', compareMode);
+  if (compareMode) updateCompareCharts();
+}
+
+// ─── THEME TOGGLE ───────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  document.getElementById('themeIcon').innerHTML = isLight ? '&#9790;' : '&#9788;';
+  document.getElementById('themeLabel').textContent = isLight ? 'Light' : 'Dark';
+  updateChartDefaults();
+  rebuildAllCharts();
+}
+
+function rebuildAllCharts() {
+  Object.values(charts).forEach(c => c.destroy());
+  Object.values(compareCharts).forEach(c => c.destroy());
+  charts = {};
+  compareCharts = {};
+  createCharts();
+  createCompareCharts();
+  if (compareMode) updateCompareCharts();
+}
+
+// ─── INIT ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  createCharts();
+  createCompareCharts();
+  selectArchetype('openFrontier');
+});
+</script>
+</body>
+</html>
