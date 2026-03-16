@@ -611,6 +611,7 @@ input[type="range"]::-moz-range-thumb {
 
 <!-- Archetypes -->
 <section class="archetypes-section">
+  <p class="intro-text" style="margin-bottom:0.75rem;">Finally, an interactive guide to the future of AI that pushes back on the doomer stories like AI2027 and enables more realistic scenario planning based both on the realities of AI's economic benefit and your inputs and judgement on the rate of technological control, AI regulation and overall technological change. This chose your own adventure dashboard can help you better conceptualize the incredible economic growth and benefits to humanity coming through technology acceleration.</p>
   <details class="intro-details" open>
     <summary>How to use this dashboard</summary>
     <div class="intro-text">Run future scenarios on the impact of technology acceleration on things that matter. Start with one of four major futures (Walled Gardens, Open Frontiers, State Machine, Wild West). Then use sliders to adjust your opinions on technology acceleration to see impact on projected future metrics. View scenario description summary in concluding summary block.</div>
@@ -856,16 +857,16 @@ const INFO_DATA = {
     aiCapability: {
       title: 'AI Capability Growth Rate',
       body: `<p><strong>What it controls:</strong> The pace at which AI systems improve in reasoning, generation, and autonomous task completion. Scale of 1 (stagnation) to 10 (exponential breakthroughs annually).</p>
-<p><strong>Why it matters:</strong> AI capability is the primary engine driving GDP growth, job displacement, job creation, and innovation in this model. Higher capability means more economic output but also faster labor disruption.</p>
-<p><strong>Model impact:</strong> Directly multiplied with AI Adoption to calculate GDP growth contribution. Also drives job displacement (higher capability = more automatable tasks) and job creation (new AI-native industries emerge). Affects healthcare QoL through medical AI advances.</p>
-<p class="info-source">Grounded in compute scaling trends from Epoch AI and capability benchmarks (MMLU, SWE-bench, ARC-AGI).</p>`
+<p><strong>Why it matters:</strong> AI capability is the primary engine driving GDP growth, job creation, and innovation in this model. More capable AI creates entirely new industries, products, and service categories that demand human creativity, judgment, and insight.</p>
+<p><strong>Model impact:</strong> Directly multiplied with AI Adoption to calculate GDP growth contribution. <strong>Net positive for jobs</strong> — AI creates more roles than it displaces by driving business innovation and new demand. Modest displacement of routine tasks is far outweighed by new jobs in AI-augmented industries. Affects healthcare QoL through medical AI advances.</p>
+<p class="info-source">Grounded in compute scaling trends from Epoch AI, historical technology job creation patterns, and capability benchmarks (MMLU, SWE-bench, ARC-AGI).</p>`
     },
     aiAdoption: {
       title: 'AI Adoption Speed',
       body: `<p><strong>What it controls:</strong> How quickly businesses, governments, and consumers integrate AI into workflows. Scale of 1 (slow, enterprise-only) to 10 (ubiquitous, consumer-grade AI everywhere).</p>
-<p><strong>Why it matters:</strong> Capability without adoption has limited economic impact. Adoption speed determines how quickly AI's potential translates into real GDP, productivity gains, and labor market shifts.</p>
-<p><strong>Model impact:</strong> Multiplied with AI Capability for GDP growth. Drives job displacement (faster adoption = quicker workforce transitions). Higher adoption also boosts job creation by expanding AI-adjacent industries. Increases digital access in QoL.</p>
-<p class="info-source">Based on enterprise AI adoption surveys from McKinsey (2024) and diffusion-of-innovation theory (Rogers, 1962).</p>`
+<p><strong>Why it matters:</strong> Capability without adoption has limited economic impact. Faster adoption translates AI potential into real GDP gains and creates demand for human roles in AI-augmented businesses — strategy, creativity, relationship management, and complex decision-making.</p>
+<p><strong>Model impact:</strong> Multiplied with AI Capability for GDP growth. <strong>Net positive for jobs</strong> — broader adoption expands the economy, creating more new roles than it automates. Every AI deployment requires human oversight, customization, and creative application. Increases digital access in QoL.</p>
+<p class="info-source">Based on enterprise AI adoption surveys from McKinsey (2024), historical technology diffusion job creation data, and diffusion-of-innovation theory (Rogers, 1962).</p>`
     },
     quantumTimeline: {
       title: 'Quantum Computing Timeline',
@@ -971,16 +972,17 @@ const INFO_DATA = {
     jobs: {
       title: 'Jobs Impact',
       body: `<p><strong>What it shows:</strong> Net job creation and displacement in millions at 5-year intervals (2025-2045). Red bars show displaced jobs, green bars show created jobs, and the yellow line shows the net.</p>
+<p><strong>Core assumption:</strong> More AI creates more jobs than it destroys. AI drives business innovation, creating new demand for human creativity, insight, strategy, and relationship skills. Robotics is the primary driver of physical job displacement, not AI itself.</p>
 <p><strong>How displacement is calculated:</strong></p>
-<p>• Base displacement = (aiCapability × 0.8 + roboticsMaturity × 0.6 + aiAdoption × 0.5) × time factor<br>
+<p>• Base displacement = (aiCapability × 0.4 + roboticsMaturity × 0.8 + aiAdoption × 0.3) × time factor<br>
 • <strong>UBI amplifier:</strong> higher UBI increases displacement (1 + ubiLevel × 4%) as workers exit the labor force faster with safety nets</p>
 <p><strong>How creation is calculated:</strong></p>
-<p>• <strong>AI-driven creation:</strong> (aiCapability × 1.2 + aiAdoption × 1.0) × time factor — more AI creates more new industries and roles<br>
+<p>• <strong>AI-driven creation:</strong> (aiCapability × 1.8 + aiAdoption × 1.5) × time factor — AI creates entirely new industries, products, and demand for human-led roles<br>
 • <strong>Traditional drivers:</strong> education, SMB access, infrastructure, biotech<br>
 • <strong>Regulation drag:</strong> -regulationIntensity × 0.6 per time unit (compliance burden)<br>
 • <strong>UBI drag:</strong> -ubiLevel × 0.4 per time unit (reduced incentive for new roles)<br>
 • <strong>Tech boosts:</strong> +2M after quantum arrival, thermo ramp, +3M after fusion arrival</p>
-<p class="info-source">Displacement estimates calibrated against McKinsey Global Institute (2023) automation projections. Creation model reflects historical patterns of technology-driven job formation.</p>`
+<p class="info-source">Creation model reflects historical patterns where major technologies (internet, mobile, cloud) consistently created more jobs than they displaced. Displacement estimates focused on robotics per IFR and McKinsey automation data.</p>`
     },
     qol: {
       title: 'Quality of Life Index',
@@ -1164,9 +1166,12 @@ function calcJobs(s) {
     const t = (yr - 2025) / 20;
     // UBI increases displacement (workers exit labor force faster with safety net)
     const ubiDispBoost = 1 + s.ubiLevel * 0.04;
-    const disp = -(s.aiCapability * 0.8 + s.roboticsMaturity * 0.6 + s.aiAdoption * 0.5) * t * (1 + t) * ubiDispBoost;
-    // More AI & adoption = more new jobs created (AI creates new industries)
-    const aiCreation = (s.aiCapability * 1.2 + s.aiAdoption * 1.0) * t * (1 + t * 0.8);
+    // AI/adoption displacement is moderate — some roles are automated
+    // but robotics is the bigger driver of physical job displacement
+    const disp = -(s.aiCapability * 0.4 + s.roboticsMaturity * 0.8 + s.aiAdoption * 0.3) * t * (1 + t) * ubiDispBoost;
+    // More AI & adoption = significantly more new jobs (AI creates new industries,
+    // drives demand for human creativity, insight, and business innovation)
+    const aiCreation = (s.aiCapability * 1.8 + s.aiAdoption * 1.5) * t * (1 + t);
     // Regulation reduces job creation (compliance burden, slower startups)
     const regDrag = s.regulationIntensity * 0.6 * t;
     // UBI reduces job creation (less incentive to create new roles)
