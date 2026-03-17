@@ -908,14 +908,14 @@ const INFO_DATA = {
       title: 'Regulatory Intensity',
       body: `<p><strong>What it controls:</strong> The stringency and scope of government regulation on AI and technology. Scale of 1 (laissez-faire) to 10 (comprehensive oversight of all AI systems).</p>
 <p><strong>Why it matters:</strong> Regulation shapes the speed of innovation, market structure, safety outcomes, and inequality. It is among the most debated variables in technology futures.</p>
-<p><strong>Model impact:</strong> <strong>Reduces GDP growth</strong> (compliance costs, slower deployment). <strong>Reduces job creation</strong> (startup formation slows, compliance overhead). <strong>Reduces inequality</strong> (worker protections, antitrust). Improves environmental QoL (emissions regulation) and social mobility (anti-monopoly effects).</p>
+<p><strong>Model impact:</strong> <strong>Slows GDP growth</strong> (-0.3%/yr per point — compliance costs, slower deployment). <strong>Reduces job creation</strong> (startup formation slows, compliance overhead). <strong>Hurts social mobility</strong> (-1.2 per point — compliance barriers protect incumbents over new entrants). <strong>Reduces inequality</strong> (worker protections, antitrust). Improves environmental QoL (emissions regulation).</p>
 <p class="info-source">Draws from EU AI Act analysis, NIST AI Risk Management Framework, and OECD regulatory impact assessments.</p>`
     },
     ubiLevel: {
       title: 'UBI / Safety Net Level',
       body: `<p><strong>What it controls:</strong> The generosity of universal basic income and social safety net programs. Scale of 0 (no safety net) to 10 (full UBI covering living expenses).</p>
 <p><strong>Why it matters:</strong> As AI displaces jobs, safety nets determine whether displaced workers face poverty or can reskill and transition. UBI also changes labor market incentives fundamentally.</p>
-<p><strong>Model impact:</strong> <strong>Increases job displacement</strong> (workers exit labor force faster with safety net). <strong>Decreases job creation</strong> (reduced incentive to create new roles). Strongly improves economic security QoL. Reduces inequality (Gini). Increases leisure time when above level 5.</p>
+<p><strong>Model impact:</strong> <strong>Slows GDP growth</strong> (-0.2%/yr per point — reduced labor participation, fiscal burden). <strong>Increases job displacement</strong> (workers exit labor force faster with safety net). <strong>Decreases job creation</strong> (reduced incentive to create new roles). Strongly improves economic security QoL. Reduces inequality (Gini). Increases leisure time when above level 5.</p>
 <p class="info-source">Based on Finnish UBI experiment results (2017-2018), Stockton SEED program data, and Andrew Yang's policy framework analysis.</p>`
     },
     educationSpeed: {
@@ -929,28 +929,28 @@ const INFO_DATA = {
       title: 'Global Trade Openness',
       body: `<p><strong>What it controls:</strong> The degree to which international trade in technology, data, and AI services flows freely. Scale of 1 (protectionist/balkanized) to 10 (fully open global markets).</p>
 <p><strong>Why it matters:</strong> Trade openness determines whether AI benefits are concentrated in a few nations or distributed globally, and whether supply chains for chips, data, and talent remain efficient.</p>
-<p><strong>Model impact:</strong> Adds to GDP growth (+0.1%/yr per point). Boosts innovation score through cross-border R&D collaboration (+1.5 per point). Limited direct effect on jobs or inequality in this model.</p>
+<p><strong>Model impact:</strong> <strong>Increases GDP growth</strong> (+0.2%/yr per point — larger markets, supply chain efficiency). <strong>Helps job creation</strong> (+0.4 per time unit — global markets create export, import, and logistics roles). Boosts innovation score through cross-border R&D collaboration (+1.5 per point).</p>
 <p class="info-source">Based on WTO trade statistics, CHIPS Act supply chain analysis, and Brookings Institution globalization research.</p>`
     },
     smbAccess: {
       title: 'Small Business AI Access',
       body: `<p><strong>What it controls:</strong> How easily small and medium businesses can adopt AI tools — through affordable APIs, open-source models, and low-code platforms. Scale of 1 (enterprise-only) to 10 (fully democratized).</p>
 <p><strong>Why it matters:</strong> When only large firms can afford AI, market concentration increases and inequality widens. When SMBs have equal access, competition thrives and economic benefits are distributed more broadly.</p>
-<p><strong>Model impact:</strong> Drives job creation (SMBs are the largest employers). Reduces inequality (Gini -0.4% per point). Improves social mobility QoL (+3.5 per point) and digital access QoL (+1.5 per point). Contributes to innovation score.</p>
+<p><strong>Model impact:</strong> <strong>Increases GDP growth</strong> (+0.15%/yr per point — broader economic participation). Drives job creation (SMBs are the largest employers). Reduces inequality (Gini -0.4% per point). Improves social mobility QoL (+3.5 per point) and digital access QoL (+1.5 per point). Contributes to innovation score.</p>
 <p class="info-source">Based on SBA small business employment data, Stripe/Shopify AI tool adoption reports, and NBER competition research.</p>`
     },
     infrastructure: {
       title: 'Infrastructure Investment',
       body: `<p><strong>What it controls:</strong> Government and private investment in physical and digital infrastructure — broadband, data centers, power grid, transportation. Scale of 1 (underinvested) to 10 (massive buildout).</p>
 <p><strong>Why it matters:</strong> AI and advanced computing require enormous infrastructure — from GPU clusters to electrical grid capacity. Infrastructure determines the ceiling on how fast technology can actually be deployed.</p>
-<p><strong>Model impact:</strong> Adds to GDP growth (+0.08%/yr per point). Improves healthcare, environmental, and digital access QoL. Supports economic security. Essential enabler for other technology trajectories.</p>
+<p><strong>Model impact:</strong> <strong>Increases GDP growth</strong> (+0.2%/yr per point — enables all other sectors). Improves healthcare, environmental, and digital access QoL. Supports economic security. Essential enabler for other technology trajectories.</p>
 <p class="info-source">Informed by ASCE Infrastructure Report Card, IEA World Energy Investment Report, and Bipartisan Infrastructure Law projections.</p>`
     },
     inflationRate: {
       title: 'Inflation / Deflation Rate',
       body: `<p><strong>What it controls:</strong> The average annual inflation rate over the projection period. Range of 0% (deflation) to 8% (high inflation). Default is 3% (near-neutral).</p>
 <p><strong>Why it matters:</strong> Inflation erodes purchasing power and creates economic uncertainty. Deflation can suppress investment. Both extremes harm growth, but they affect different populations asymmetrically.</p>
-<p><strong>Model impact:</strong> At <strong>3% (neutral)</strong>: no effect on GDP. <strong>Above 3%</strong>: drags GDP growth (-0.3%/yr per point above 3%) and increases inequality (erodes lower-income purchasing power). <strong>Below 3%</strong>: mild GDP boost (+0.1%/yr per point below 3%) but risks deflationary spiral at very low levels.</p>
+<p><strong>Model impact:</strong> At <strong>3% (neutral)</strong>: no effect on GDP or QoL. <strong>Above 3%</strong>: drags GDP growth (-0.3%/yr per point above 3%), increases inequality, and <strong>hurts quality of life</strong> (healthcare affordability -1/pt, economic security -1.5/pt). <strong>Below 3%</strong>: mild GDP boost (+0.1%/yr per point below 3%) but also hurts QoL (deflation erodes wages and investment).</p>
 <p class="info-source">Based on Federal Reserve inflation targeting framework, BLS CPI data, and IMF World Economic Outlook inflation models.</p>`
     }
   },
@@ -959,13 +959,16 @@ const INFO_DATA = {
       title: 'U.S. GDP Trajectory',
       body: `<p><strong>What it shows:</strong> Projected U.S. GDP in trillions from 2025 to 2045, compared against a 2.5% baseline growth rate (dashed line). Starting value: $28T (2025).</p>
 <p><strong>How it is calculated:</strong> Each year compounds the previous GDP by a dynamic growth rate. The rate starts at a 2.5% base and is modified by:</p>
-<p>• <strong>AI effect:</strong> aiCapability × aiAdoption × 0.3% (largest contributor)<br>
-• <strong>Thermo computing:</strong> thermoComputing × 0.2%/yr, ramping over 8 years<br>
-• <strong>Quantum:</strong> +0.5%/yr after quantum arrival year<br>
-• <strong>Fusion:</strong> +0.8%/yr after fusion arrival year<br>
-• <strong>Biotech:</strong> biotechLevel × 0.15%/yr, ramping over 10 years<br>
-• <strong>Trade & infra:</strong> tradeOpenness × 0.1% + infrastructure × 0.08%<br>
-• <strong>Regulation drag:</strong> -(10 - regulationIntensity) × 0.1%<br>
+<p>• <strong>AI effect:</strong> aiCapability × aiAdoption × 0.05% (largest single contributor — 8×8 = 3.2%/yr)<br>
+• <strong>Thermo computing:</strong> thermoComputing × 0.15%/yr, ramping over 8 years<br>
+• <strong>Quantum:</strong> +0.4%/yr after quantum arrival year<br>
+• <strong>Fusion:</strong> +0.6%/yr after fusion arrival year<br>
+• <strong>Biotech:</strong> biotechLevel × 0.1%/yr, ramping over 10 years<br>
+• <strong>Trade openness:</strong> +tradeOpenness × 0.2%/yr (global markets boost growth)<br>
+• <strong>Infrastructure:</strong> +infrastructure × 0.2%/yr (enables all sectors)<br>
+• <strong>SMB access:</strong> +smbAccess × 0.15%/yr (broader economic participation)<br>
+• <strong>Regulation drag:</strong> -regulationIntensity × 0.3%/yr (higher regulation = slower growth)<br>
+• <strong>UBI drag:</strong> -ubiLevel × 0.2%/yr (reduced labor participation)<br>
 • <strong>Inflation:</strong> deviation from 3% baseline penalizes or boosts growth</p>
 <p>Growth rate is clamped between 0.5% and 12% annually.</p>
 <p class="info-source">Baseline 2.5% derived from CBO long-term GDP projections. Model structure inspired by Solow growth model with technology multipliers.</p>`
@@ -982,6 +985,7 @@ const INFO_DATA = {
 • <strong>Traditional drivers:</strong> education, SMB access, infrastructure, biotech<br>
 • <strong>Regulation drag:</strong> -regulationIntensity × 0.6 per time unit (compliance burden)<br>
 • <strong>UBI drag:</strong> -ubiLevel × 0.4 per time unit (reduced incentive for new roles)<br>
+• <strong>Trade openness:</strong> +tradeOpenness × 0.4 per time unit (global markets create jobs)<br>
 • <strong>Tech boosts:</strong> +2M after quantum arrival, thermo ramp, +3M after fusion arrival</p>
 <p class="info-source">Creation model reflects historical patterns where major technologies (internet, mobile, cloud) consistently created more jobs than they displaced. Displacement estimates focused on robotics per IFR and McKinsey automation data.</p>`
     },
@@ -989,11 +993,11 @@ const INFO_DATA = {
       title: 'Quality of Life Index',
       body: `<p><strong>What it shows:</strong> A radar chart scoring six dimensions of quality of life on a 0-100 scale, representing projected 2045 outcomes.</p>
 <p><strong>How each dimension is calculated:</strong></p>
-<p>• <strong>Healthcare</strong> (base 55): +aiCapability × 2.5, +infrastructure × 1.5, +ubiLevel × 1, +biotechLevel × 3<br>
+<p>• <strong>Healthcare</strong> (base 55): +aiCapability × 2.5, +infrastructure × 1.5, +ubiLevel × 1, +biotechLevel × 3, -inflation deviation × 1<br>
 • <strong>Environment</strong> (base 40): +20 if fusion by 2040, +10 if by 2050, +regulationIntensity × 2, +infrastructure, +biotech<br>
 • <strong>Education</strong> (base 50): +educationSpeed × 3, +aiCapability, +smbAccess × 0.5<br>
-• <strong>Econ Security</strong> (base 40): +ubiLevel × 5, +educationSpeed × 1.5, +infrastructure<br>
-• <strong>Social Mobility</strong> (base 35): +smbAccess × 3.5, +educationSpeed × 2.5, -(10 - regulationIntensity) × 0.5<br>
+• <strong>Econ Security</strong> (base 40): +ubiLevel × 5, +educationSpeed × 1.5, +infrastructure, -inflation deviation × 1.5<br>
+• <strong>Social Mobility</strong> (base 35): +smbAccess × 3.5, +educationSpeed × 2.5, -regulationIntensity × 1.2 (regulation protects incumbents)<br>
 • <strong>Digital Access</strong> (base 60): +infrastructure × 2, +smbAccess × 1.5, +aiAdoption</p>
 <p>All dimensions capped at 100.</p>
 <p class="info-source">Dimension weights inspired by UNDP Human Development Index methodology and OECD Better Life Index framework.</p>`
@@ -1130,18 +1134,25 @@ function calcGDP(s) {
   for (const yr of YEARS) {
     if (yr === 2025) { data.push(gdp); continue; }
     const base = 0.025;
-    const ai = s.aiCapability * s.aiAdoption * 0.003;
-    const energy = yr > s.fusionArrival ? 0.008 : 0;
-    const quantum = yr > s.quantumTimeline ? 0.005 : 0;
-    const thermo = s.thermoComputing * 0.002 * Math.min(1, (yr - 2025) / 8); // ramps faster, bigger impact than quantum
-    const regDrag = (10 - s.regulationIntensity) * 0.001;
-    const trade = s.tradeOpenness * 0.001;
-    const infra = s.infrastructure * 0.0008;
-    const biotech = s.biotechLevel * 0.0015 * Math.min(1, (yr - 2025) / 10);
+    const ai = s.aiCapability * s.aiAdoption * 0.0005;  // 8×8→3.2%, main GDP driver
+    const energy = yr > s.fusionArrival ? 0.006 : 0;
+    const quantum = yr > s.quantumTimeline ? 0.004 : 0;
+    const thermo = s.thermoComputing * 0.0015 * Math.min(1, (yr - 2025) / 8); // ramps faster, bigger impact than quantum
+    // Regulation: higher intensity = more drag on GDP (compliance costs, slower deployment)
+    const regDrag = s.regulationIntensity * 0.003;  // 10→3% drag — very visible
+    // UBI: higher UBI = drag on GDP (reduced labor participation, fiscal burden)
+    const ubiDrag = s.ubiLevel * 0.002;  // 10→2% drag
+    // Trade: higher openness = bigger GDP boost (larger markets, supply chain efficiency)
+    const trade = s.tradeOpenness * 0.002;  // 10→2% boost
+    // Infrastructure: higher investment = stronger GDP growth (enables all other sectors)
+    const infra = s.infrastructure * 0.002;  // 10→2% boost
+    // SMB access: more small business AI = broader economic participation, GDP boost
+    const smbBoost = s.smbAccess * 0.0015;  // 10→1.5% boost
+    const biotech = s.biotechLevel * 0.001 * Math.min(1, (yr - 2025) / 10);
     // Inflation drag: 3% is neutral, above 3% drags growth, below 3% modest boost (deflation risk)
     const inflDev = s.inflationRate - 3;
     const inflEffect = inflDev > 0 ? -inflDev * 0.003 : inflDev * 0.001;
-    let rate = base + ai + energy + quantum + thermo - regDrag + trade + infra + biotech + inflEffect;
+    let rate = base + ai + energy + quantum + thermo - regDrag - ubiDrag + trade + infra + smbBoost + biotech + inflEffect;
     rate = Math.max(0.005, Math.min(0.12, rate));
     gdp *= (1 + rate);
     data.push(parseFloat(gdp.toFixed(2)));
@@ -1177,7 +1188,9 @@ function calcJobs(s) {
     const regDrag = s.regulationIntensity * 0.6 * t;
     // UBI reduces job creation (less incentive to create new roles)
     const ubiCreDrag = s.ubiLevel * 0.4 * t;
-    let cre = aiCreation + (s.educationSpeed * 0.7 + s.smbAccess * 0.5 + s.infrastructure * 0.3 + s.biotechLevel * 0.4) * t * (1 + t * 0.5) - regDrag - ubiCreDrag;
+    // Trade openness helps jobs (global markets create export/import/logistics roles)
+    const tradeJobs = s.tradeOpenness * 0.4 * t;
+    let cre = aiCreation + (s.educationSpeed * 0.7 + s.smbAccess * 0.5 + s.infrastructure * 0.3 + s.biotechLevel * 0.4) * t * (1 + t * 0.5) + tradeJobs - regDrag - ubiCreDrag;
     if (yr > s.quantumTimeline) cre += 2;
     const thermoBoost = s.thermoComputing * 0.4 * t;
     cre += thermoBoost;
@@ -1189,13 +1202,18 @@ function calcJobs(s) {
 }
 
 function calcQoL(s) {
-  const healthcare = Math.min(100, 55 + s.aiCapability * 2.5 + s.infrastructure * 1.5 + s.ubiLevel * 1 + s.biotechLevel * 3);
+  // Inflation impact on QoL: deviation from 3% hurts healthcare affordability and economic security
+  const inflDev = Math.abs(s.inflationRate - 3);
+  const inflQoLPenalty = inflDev * 1.5; // each point away from 3% costs QoL
+  const healthcare = Math.min(100, 55 + s.aiCapability * 2.5 + s.infrastructure * 1.5 + s.ubiLevel * 1 + s.biotechLevel * 3 - inflDev * 1);
   const environment = Math.min(100, 40 + (s.fusionArrival <= 2040 ? 20 : s.fusionArrival <= 2050 ? 10 : 0) + s.regulationIntensity * 2 + s.infrastructure * 1 + s.biotechLevel * 1);
   const education = Math.min(100, 50 + s.educationSpeed * 3 + s.aiCapability * 1 + s.smbAccess * 0.5);
-  const econSecurity = Math.min(100, 40 + s.ubiLevel * 5 + s.educationSpeed * 1.5 + s.infrastructure * 1);
-  const socialMobility = Math.min(100, 35 + s.smbAccess * 3.5 + s.educationSpeed * 2.5 - (10 - s.regulationIntensity) * 0.5);
+  // Inflation hurts economic security (purchasing power erosion)
+  const econSecurity = Math.min(100, 40 + s.ubiLevel * 5 + s.educationSpeed * 1.5 + s.infrastructure * 1 - inflQoLPenalty);
+  // Higher regulation HURTS social mobility (compliance barriers for new entrants, incumbent protection)
+  const socialMobility = Math.min(100, 35 + s.smbAccess * 3.5 + s.educationSpeed * 2.5 - s.regulationIntensity * 1.2);
   const digitalAccess = Math.min(100, 60 + s.infrastructure * 2 + s.smbAccess * 1.5 + s.aiAdoption * 1);
-  return [healthcare, environment, education, econSecurity, socialMobility, digitalAccess].map(v => parseFloat(v.toFixed(1)));
+  return [healthcare, environment, education, econSecurity, socialMobility, digitalAccess].map(v => Math.max(0, parseFloat(v.toFixed(1))));
 }
 
 function calcLeisure(s) {
