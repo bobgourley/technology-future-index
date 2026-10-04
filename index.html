@@ -910,14 +910,14 @@ const INFO_DATA = {
       title: 'Robotics Maturity',
       body: `<p><strong>What it controls:</strong> How advanced and widely deployed physical robots become — from warehouse automation to humanoid general-purpose robots. Scale of 1 (niche industrial) to 10 (humanoid robots in daily life).</p>
 <p><strong>Why it matters:</strong> Robotics extends AI from digital tasks into the physical world, affecting manufacturing, logistics, healthcare, agriculture, and domestic labor.</p>
-<p><strong>Model impact:</strong> Drives job displacement in manual/physical occupations. Contributes to leisure time gains (robots handle physical chores). Lower impact on GDP than AI but significant for labor market restructuring.</p>
+<p><strong>Model impact:</strong> <strong>Big quality-of-life driver.</strong> Improves Healthcare (+3 per point: surgical robots, eldercare, caregiving assistance), Economic Security (+2.5 per point: cheaper goods, housing and services) and Environment (+1.5 per point: precision agriculture, recycling, cleanup). Contributes to leisure time gains (robots handle physical chores). Drives job displacement in manual/physical occupations.</p>
 <p class="info-source">Informed by IFR World Robotics Report, Tesla Optimus development, and McKinsey automation potential estimates.</p>`
     },
     biotechLevel: {
       title: 'Biotech Advancement',
       body: `<p><strong>What it controls:</strong> Progress in biotechnology including gene therapy, synthetic biology, longevity research, and AI-driven drug discovery. Scale of 1 (incremental) to 10 (transformative breakthroughs).</p>
 <p><strong>Why it matters:</strong> Biotech advances directly improve healthcare outcomes, extend productive lifespans, and create new industries worth trillions in economic value.</p>
-<p><strong>Model impact:</strong> Strongest contributor to Healthcare QoL (+3 per point). Ramps GDP contribution over a decade (reflecting R&D-to-market timelines). Adds to innovation score and job creation in life sciences sectors.</p>
+<p><strong>Model impact:</strong> <strong>Largest single driver of quality of life.</strong> Healthcare +5 per point (gene therapy, longevity, AI drug discovery), Environment +2.5 per point (synthetic biology, bio-materials, carbon capture) and Economic Security +1.5 per point (lower lifetime healthcare costs). Ramps GDP contribution over a decade (reflecting R&D-to-market timelines). Adds to innovation score and job creation in life sciences sectors.</p>
 <p class="info-source">Based on NIH biotech funding trends, CRISPR therapeutic pipeline data, and PwC pharma industry projections.</p>`
     },
     regulationIntensity: {
@@ -1009,13 +1009,13 @@ const INFO_DATA = {
       title: 'Quality of Life Index',
       body: `<p><strong>What it shows:</strong> A radar chart scoring six dimensions of quality of life on a 0-100 scale, representing projected 2045 outcomes.</p>
 <p><strong>How each dimension is calculated:</strong></p>
-<p>• <strong>Healthcare</strong> (base 55): +aiCapability × 2.5, +infrastructure × 1.5, +ubiLevel × 1, +biotechLevel × 3, -inflation deviation × 1<br>
-• <strong>Environment</strong> (base 40): +20 if fusion by 2040, +10 if by 2050, +regulationIntensity × 2, +infrastructure, +biotech<br>
+<p>• <strong>Healthcare</strong> (base 15): <strong>+biotechLevel × 5</strong>, <strong>+roboticsMaturity × 3</strong>, +aiCapability × 1.5, +infrastructure, +ubiLevel × 0.5, -inflation deviation × 1<br>
+• <strong>Environment</strong> (base 25): +20 if fusion by 2040, +10 if by 2050, +biotechLevel × 2.5, +roboticsMaturity × 1.5, +regulationIntensity × 1.5, +infrastructure<br>
 • <strong>Education</strong> (base 50): +educationSpeed × 3, +aiCapability, +smbAccess × 0.5<br>
-• <strong>Econ Security</strong> (base 40): +ubiLevel × 5, +educationSpeed × 1.5, +infrastructure, -inflation deviation × 1.5<br>
+• <strong>Econ Security</strong> (base 20): +ubiLevel × 4, +roboticsMaturity × 2.5, +biotechLevel × 1.5, +educationSpeed × 1.5, +infrastructure, -inflation deviation × 1.5<br>
 • <strong>Social Mobility</strong> (base 35): +smbAccess × 3.5, +educationSpeed × 2.5, -regulationIntensity × 1.2 (regulation protects incumbents)<br>
 • <strong>Digital Access</strong> (base 60): +infrastructure × 2, +smbAccess × 1.5, +aiAdoption</p>
-<p>All dimensions capped at 100.</p>
+<p>All dimensions capped at 100. Biotech and robotics are the two largest technology drivers of quality of life in this model: biotech swings Healthcare by ~45 points across its range, and robotics lifts Healthcare, Environment and Economic Security by 15-25 points each.</p>
 <p class="info-source">Dimension weights inspired by UNDP Human Development Index methodology and OECD Better Life Index framework.</p>`
     },
     leisure: {
@@ -1221,11 +1221,15 @@ function calcQoL(s) {
   // Inflation impact on QoL: deviation from 3% hurts healthcare affordability and economic security
   const inflDev = Math.abs(s.inflationRate - 3);
   const inflQoLPenalty = inflDev * 1.5; // each point away from 3% costs QoL
-  const healthcare = Math.min(100, 55 + s.aiCapability * 2.5 + s.infrastructure * 1.5 + s.ubiLevel * 1 + s.biotechLevel * 3 - inflDev * 1);
-  const environment = Math.min(100, 40 + (s.fusionArrival <= 2040 ? 20 : s.fusionArrival <= 2050 ? 10 : 0) + s.regulationIntensity * 2 + s.infrastructure * 1 + s.biotechLevel * 1);
+  // Biotech is the dominant healthcare driver (gene therapy, longevity, AI drug discovery);
+  // robotics adds surgical robots, eldercare and caregiving assistance
+  const healthcare = Math.min(100, 15 + s.aiCapability * 1.5 + s.infrastructure * 1 + s.ubiLevel * 0.5 + s.biotechLevel * 5 + s.roboticsMaturity * 3 - inflDev * 1);
+  // Biotech: synthetic biology, bio-materials, carbon capture; robotics: precision agriculture, recycling, cleanup
+  const environment = Math.min(100, 25 + (s.fusionArrival <= 2040 ? 20 : s.fusionArrival <= 2050 ? 10 : 0) + s.regulationIntensity * 1.5 + s.infrastructure * 1 + s.biotechLevel * 2.5 + s.roboticsMaturity * 1.5);
   const education = Math.min(100, 50 + s.educationSpeed * 3 + s.aiCapability * 1 + s.smbAccess * 0.5);
   // Inflation hurts economic security (purchasing power erosion)
-  const econSecurity = Math.min(100, 40 + s.ubiLevel * 5 + s.educationSpeed * 1.5 + s.infrastructure * 1 - inflQoLPenalty);
+  // Robotics lowers the cost of goods, housing and services; biotech lowers lifetime healthcare costs
+  const econSecurity = Math.min(100, 20 + s.ubiLevel * 4 + s.educationSpeed * 1.5 + s.infrastructure * 1 + s.roboticsMaturity * 2.5 + s.biotechLevel * 1.5 - inflQoLPenalty);
   // Higher regulation HURTS social mobility (compliance barriers for new entrants, incumbent protection)
   const socialMobility = Math.min(100, 35 + s.smbAccess * 3.5 + s.educationSpeed * 2.5 - s.regulationIntensity * 1.2);
   const digitalAccess = Math.min(100, 60 + s.infrastructure * 2 + s.smbAccess * 1.5 + s.aiAdoption * 1);
